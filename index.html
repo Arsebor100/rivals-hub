@@ -9,45 +9,51 @@
   Файл єдиний: index.html. Стилі та скрипт всередині.
 
   ЛОКАЛЬНІ АСЕТИ (в корені репо):
-    - Untitled6.png                                — лого Rivals
-    - Images_Logo_N_512_13854780042.png            — буква N
-    - Images_Logo_G_512_13854780213.png            — буква G
-    - Rubik-*.ttf                                  — шрифт Rubik
+    - Untitled6.png                 — лого Rivals (шапка + GameLogo лоадера)
+    - Arseniy_Borisenko.png         — картинка, яка літає в лоадері (обидві половини)
+    - Rubik-*.ttf                   — шрифт Rubik
     - 2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg — звук інтро
-    - click_sound_177266782.ogg                    — звук кліку
+    - click_sound_177266782.ogg     — звук кліку
 
-  ЛОАДЕР:
+  ЛОАДЕР — точна реконструкція _SpiralAnimation + SplitLogo з LoadingScreen.rbxmx:
     1. 150ms пауза.
-    2. 150-1400ms: N зліва, G справа → центр (БЕЗ перехрещу).
-       Формула: nX = -far + (far - gap) * ease → від -far до -gap.
-       (Був баг: стояло (gap + far) — знак невірний, через це N/G
-       мінялися місцями. Виправлено.)
-    3. 1400-1650ms: тримаються поряд (N зліва, G справа, зазор ~20%).
-    4. 1650-2100ms: SplitLogo — роз'їжджаються назад.
-    5. 1950-2500ms: GameLogo (Untitled6.png) scale-in 0.35→1.
-    6. 2500-3000ms: GameLogo тримається.
-    7. 3000-3500ms: fade out.
+    2. SPIRAL (150-1350ms): дві Arseniy_Borisenko.png зліва та справа
+       летять до центру. Позиція — Out Quint (як TweenPosition у оригіналі).
+       Обертання — за формулою з _SpiralAnimation:
+         v41 = (sqrt(1-(p/100-1)^2)*540+180) % 360
+         rotation = -v41  (обидві в одну сторону)
+       Тобто 180°→0° за фазу (на пів-оберту).
+    3. HOLD (1350-1550ms): стоять по центру з невеликим зазором.
+    4. SPLIT (1550-2100ms): розлітаються.
+       Позиція — InOut Sine (як у SplitLogo).
+       Обертання з оригіналу:
+         v10 = (720 * t^2) % 360
+         N.rotation = -v10 (проти годинникової)
+         G.rotation = +v10 (за годинниковою)
+    5. GAMELOGO (2000-2450ms): Untitled6.png scale-in 0.35→1.
+    6. HOLD LOGO (2450-2900ms).
+    7. FADE (2900-3400ms): плавно зникає.
     Один раз за сесію ("rivalsHubLoaded").
 
-  ЗВУК (важливо):
-    Браузери БЛОКУЮТЬ autoplay без взаємодії. Це не баг, це
-    політика Chrome/Safari. Обходити можна так:
-      1) Перший візит: показуємо hint "tap for sound". Після
-         першої взаємодії звук грає і браузер запам'ятовує сайт.
-      2) Наступні візити (у цьому браузері): autoplay може
-         спрацювати сам (Chrome дозволяє при "high engagement").
-    Тригери (перший, що спрацює):
-      pointerdown, mousemove, scroll, keydown, touchstart.
-    На десктопі mousemove часто вже достатньо.
+  ЗВУК:
+    Браузери блокують autoplay без user gesture (політика Chrome/Safari).
+    Тригери: pointerdown, mousemove, scroll, keydown, touchstart, click.
+    На ПК mousemove часто спрацьовує одразу при русі миші.
+    Якщо 600мс тихо — внизу лоадера з'являється hint "торкнись для звуку".
 
   КОПІЮВАННЯ КОДУ:
     - Клік по .codes-row копіює частину ДО " — " (тільки код).
     - Показує "Скопійовано!" на 1.2с.
 
-  ЖОРСТКІ ПРАВИЛА (ті ж):
-  1-10 — НЕ переробляй дизайн, НЕ додавай секції, НЕ видаляй
-  мультиязычність, статуси, копіювання, N/G, GameLogo,
-  НЕ додавай "опис" назад у картку.
+  ЖОРСТКІ ПРАВИЛА:
+  1. НЕ переробляй дизайн під себе.
+  2. НЕ додавай нові секції/кнопки/форми/фреймворки.
+  3. НЕ винось стилі/скрипт в окремі файли.
+  4. НЕ видаляй мультиязычність, статуси, копіювання, лоадер,
+     спіральну анімацію, GameLogo.
+  5. НЕ додавай "опис" назад у картку.
+  6. НЕ змінюй назви файлів асетів.
+  7. НЕ роби "я так бачу красивіше".
 
   СТАТУСИ: "works" | "broken" | "deleted"
   ДАТА: ДД.ММ.РРРР
@@ -165,7 +171,7 @@ button,select{font:inherit}
   width:100%;height:100%;
   object-fit:contain;
   pointer-events:none;
-  filter:drop-shadow(0 10px 30px rgba(124,58,237,.4));
+  filter:drop-shadow(0 10px 40px rgba(124,58,237,.5));
 }
 
 .game-logo{
@@ -182,20 +188,7 @@ button,select{font:inherit}
 }
 
 .loader-text{color:var(--soft);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55;position:relative;z-index:1}
-
-.loader-hint{
-  position:absolute;
-  bottom:24px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:.72rem;
-  color:rgba(148,163,184,.5);
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  opacity:0;
-  animation:hintPulse 1.6s ease-in-out infinite;
-  pointer-events:none;
-}
+.loader-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:.72rem;color:rgba(148,163,184,.5);letter-spacing:.1em;text-transform:uppercase;opacity:0;animation:hintPulse 1.6s ease-in-out infinite;pointer-events:none}
 .loader-hint.show{opacity:1}
 @keyframes hintPulse{0%,100%{opacity:.35}50%{opacity:.75}}
 @keyframes loaderPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
@@ -216,10 +209,10 @@ button,select{font:inherit}
 <div class="loader" id="loader">
   <div class="loader-stage">
     <div class="logo-half" id="logoN">
-      <img src="./Images_Logo_N_512_13854780042.png" alt="" />
+      <img src="./Arseniy_Borisenko.png" alt="" />
     </div>
     <div class="logo-half" id="logoG">
-      <img src="./Images_Logo_G_512_13854780213.png" alt="" />
+      <img src="./Arseniy_Borisenko.png" alt="" />
     </div>
     <img class="game-logo" id="gameLogo" src="./Untitled6.png" alt="Rivals" />
   </div>
@@ -369,11 +362,8 @@ function tryIntro() {
   } catch(e){}
 }
 
-// Спроба №1: одразу
 tryIntro();
 
-// Спроба №2: на будь-яку активність (mousemove, scroll, клік, тап, клавіша, pointerdown)
-// На десктопі mousemove зазвичай спрацьовує першим.
 const soundTriggers = ["pointerdown","mousemove","scroll","keydown","touchstart","click"];
 function onAnyActivity() {
   tryIntro();
@@ -381,9 +371,8 @@ function onAnyActivity() {
     soundTriggers.forEach(ev => document.removeEventListener(ev, onAnyActivity));
   }
 }
-soundTriggers.forEach(ev => document.addEventListener(ev, onAnyActivity, { passive: true, once: false }));
+soundTriggers.forEach(ev => document.addEventListener(ev, onAnyActivity, { passive: true }));
 
-// Якщо через 600мс звук ще не зайшов — показуємо hint
 setTimeout(() => {
   if (!introPlayed) {
     const hint = document.getElementById("loaderHint");
@@ -600,7 +589,7 @@ document.addEventListener("keydown", async (e) => {
   }
 });
 
-// ── LOADER ──────────────────────────────────────────────────
+// ── LOADER: Spiral → Split → GameLogo → Fade ───────────────
 (function runLoader(){
   const loader = document.getElementById("loader");
   if (!loader) return;
@@ -613,70 +602,99 @@ document.addEventListener("keydown", async (e) => {
   const G = document.getElementById("logoG");
   const gameLogo = document.getElementById("gameLogo");
 
-  // Позиції у відсотках від ширини stage (transform: translateX(%))
-  const N_START_X = -180;   // % зсув вліво (за екраном)
-  const G_START_X =  180;   // % зсув вправо (за екраном)
-  const N_MID_X   = -30;    // % (ліва половина "NG")
-  const G_MID_X   =  30;    // % (права половина "NG")
-  const N_END_X   = -200;   // % (виліт вліво)
-  const G_END_X   =  200;   // % (виліт вправо)
+  // Позиції у % від ширини stage (translateX %).
+  // Початок — за межами екрана (обидві картинки Arseniy_Borisenko).
+  const N_START_X = -170;
+  const G_START_X =  170;
+  const N_MID_X   =  -22;
+  const G_MID_X   =   22;
+  const N_END_X   = -180;
+  const G_END_X   =  180;
 
-  // Таймлайн (ms)
-  const T_PAUSE      = 150;
-  const T_SLIDE_IN   = 1250;
-  const T_HOLD       = 250;
-  const T_SLIDE_OUT  = 450;
-  const T_LOGO_IN    = 550;
-  const T_LOGO_HOLD  = 500;
-  const T_FADE       = 500;
+  // Таймлайн
+  const T_PAUSE       = 150;
+  const T_SPIRAL_DUR  = 1200;   // _SpiralAnimation
+  const T_HOLD        = 200;
+  const T_SPLIT_DUR   = 550;    // SplitLogo
+  const T_LOGO_IN     = 450;
+  const T_LOGO_HOLD   = 450;
+  const T_FADE        = 500;
 
-  const T_IN_END     = T_PAUSE + T_SLIDE_IN;                    // 1400
-  const T_HOLD_END   = T_IN_END + T_HOLD;                       // 1650
-  const T_OUT_END    = T_HOLD_END + T_SLIDE_OUT;                // 2100
-  const T_LOGO_START = T_OUT_END - 150;                         // 1950 (трохи раніше)
-  const T_LOGO_END   = T_LOGO_START + T_LOGO_IN;                // 2500
-  const T_FADE_START = T_LOGO_END + T_LOGO_HOLD;                // 3000
-  const T_END        = T_FADE_START + T_FADE;                   // 3500
+  const T_SPIRAL_START = T_PAUSE;
+  const T_SPIRAL_END   = T_SPIRAL_START + T_SPIRAL_DUR;   // 1350
+  const T_HOLD_END     = T_SPIRAL_END + T_HOLD;           // 1550
+  const T_SPLIT_END    = T_HOLD_END + T_SPLIT_DUR;        // 2100
+  const T_LOGO_START   = T_SPLIT_END - 100;               // 2000
+  const T_LOGO_END     = T_LOGO_START + T_LOGO_IN;        // 2450
+  const T_FADE_START   = T_LOGO_END + T_LOGO_HOLD;        // 2900
+  const T_END          = T_FADE_START + T_FADE;           // 3400
 
   const start = performance.now();
   let done = false;
 
   function easeOutQuint(x){ return 1 - Math.pow(1 - x, 5); }
+  function easeInOutSine(x){ return -(Math.cos(Math.PI * x) - 1) / 2; }
   function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
-  function lerp(a, b, k){ return a + (b - a) * k; }
+  function lerp(a,b,k){ return a + (b - a) * k; }
 
   function frame(now){
     if (done) return;
     const e = now - start;
 
-    // ── Фаза 1: заїзд ──
-    if (e < T_PAUSE) {
+    // ── Фаза 1: SpiralAnimation ──
+    if (e < T_SPIRAL_START) {
       N.style.opacity = 0;
       G.style.opacity = 0;
-    } else if (e < T_IN_END) {
-      const t01 = (e - T_PAUSE) / T_SLIDE_IN;
-      const ease = easeOutQuint(t01);
-      const nx = lerp(N_START_X, N_MID_X, ease);
-      const gx = lerp(G_START_X, G_MID_X, ease);
-      N.style.transform = 'translateX(' + nx + '%)';
-      G.style.transform = 'translateX(' + gx + '%)';
+    } else if (e < T_SPIRAL_END) {
+      const t01 = (e - T_SPIRAL_START) / T_SPIRAL_DUR;
+      const easePos = easeOutQuint(t01);
+
+      // Позиція: Out Quint (як TweenPosition)
+      const nx = lerp(N_START_X, N_MID_X, easePos);
+      const gx = lerp(G_START_X, G_MID_X, easePos);
+
+      // Обертання з _SpiralAnimation:
+      // v41 = (sqrt(1 - (p/100 - 1)^2) * 540 + 180) % 360
+      // Rotation = -v41 (обидві в одну сторону)
+      const p = t01 * 100;
+      const rad = Math.sqrt(Math.max(0, 1 - Math.pow(p/100 - 1, 2)));
+      const v41 = (rad * 540 + 180) % 360;
+      const rot = -v41;
+
+      N.style.transform = 'translateX(' + nx + '%) rotate(' + rot + 'deg)';
+      G.style.transform = 'translateX(' + gx + '%) rotate(' + rot + 'deg)';
       N.style.opacity = Math.min(1, t01 * 2.5);
       G.style.opacity = Math.min(1, t01 * 2.5);
-    } else if (e < T_HOLD_END) {
-      N.style.transform = 'translateX(' + N_MID_X + '%)';
-      G.style.transform = 'translateX(' + G_MID_X + '%)';
+    }
+    // ── Фаза 2: HOLD (стоять в центрі) ──
+    else if (e < T_HOLD_END) {
+      N.style.transform = 'translateX(' + N_MID_X + '%) rotate(0deg)';
+      G.style.transform = 'translateX(' + G_MID_X + '%) rotate(0deg)';
       N.style.opacity = 1;
       G.style.opacity = 1;
-    } else if (e < T_OUT_END) {
-      const t01 = (e - T_HOLD_END) / T_SLIDE_OUT;
-      const ease = easeOutCubic(t01);
-      const nx = lerp(N_MID_X, N_END_X, ease);
-      const gx = lerp(G_MID_X, G_END_X, ease);
-      N.style.transform = 'translateX(' + nx + '%)';
-      G.style.transform = 'translateX(' + gx + '%)';
-      N.style.opacity = 1 - ease * 0.6;
-      G.style.opacity = 1 - ease * 0.6;
-    } else {
+    }
+    // ── Фаза 3: SplitLogo ──
+    else if (e < T_SPLIT_END) {
+      const t01 = (e - T_HOLD_END) / T_SPLIT_DUR;
+      const easePos = easeInOutSine(t01);
+
+      const nx = lerp(N_MID_X, N_END_X, easePos);
+      const gx = lerp(G_MID_X, G_END_X, easePos);
+
+      // Обертання з SplitLogo:
+      // v10 = (720 * (t^2)) % 360
+      // N = -v10, G = +v10
+      const v10 = (720 * t01 * t01) % 360;
+      const rotN = -v10;
+      const rotG =  v10;
+
+      N.style.transform = 'translateX(' + nx + '%) rotate(' + rotN + 'deg)';
+      G.style.transform = 'translateX(' + gx + '%) rotate(' + rotG + 'deg)';
+      N.style.opacity = 1 - easePos * 0.7;
+      G.style.opacity = 1 - easePos * 0.7;
+    }
+    // ── Після Split ──
+    else {
       N.style.opacity = 0;
       G.style.opacity = 0;
     }
