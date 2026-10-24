@@ -18,15 +18,18 @@
      ЯВНО не попросив.
   3. НЕ винось стилі/скрипт в окремі файли.
   4. НЕ видаляй мультиязычність (uk/ru/en), кнопки UA/RU/EN,
-     фільтр статусів, кнопку "Запропонувати", тег, логотип гри,
-     аватар автора, групу, Discord.
+     фільтр статусів, кнопку "Запропонувати", теги, логотип гри,
+     аватар автора, групу, Discord, блок кодів.
   5. НЕ видаляй збереження мови в localStorage (ключ
      "rivalsHubLang").
   6. НЕ додавай поле "опис" назад у картку — воно навмисно
      видалено.
-  7. Блок "Плюси" або "Мінуси" ховається, якщо масив порожній.
+  7. Блок "Плюси" / "Мінуси" ховається, якщо масив порожній.
      Другий блок тоді на всю ширину.
-  8. НЕ роби "я так бачу красивіше". Роби лише те, що
+  8. Блок "Коди" — окрема строка, НЕ в плюсах. Ховається, якщо
+     codes порожній. НЕ переносити коди в pros.
+  9. Теги — масив tags[], кожен тег окремим чипом.
+ 10. НЕ роби "я так бачу красивіше". Роби лише те, що
      просять. Незрозуміло — спитай, не додумуй.
 
   СТАТУСИ (тільки ці три):
@@ -48,7 +51,10 @@
     discordUrl      — посилання на Discord — опційно
     discordIcon     — іконка Discord — опційно
     checked         — "ДД.ММ.РРРР"
-    tag             — коротка строка або "", напр. "modded shop"
+    tags            — масив рядків, напр. ["rauls", "banana"], може бути []
+    codes           — {uk,ru,en} — рядок з кодами, напр. "2k 🪙".
+                      Порожній/відсутній — блок не показується.
+                      НЕ переносити коди в pros.
     image           — логотип гри (rbxcdn) — опційно
     pros {uk,ru,en} — масиви рядків, може бути []
     cons {uk,ru,en} — масиви рядків, може бути []
@@ -109,7 +115,11 @@ button,select{font:inherit}
 .discord-link:hover{transform:scale(1.1)}
 .discord-icon{width:20px;height:20px;object-fit:contain;border-radius:6px}
 .dot{color:var(--soft);opacity:.6}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
+.codes-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.22);margin-bottom:16px;font-size:.82rem;color:#fde68a}
+.codes-row .codes-label{color:#facc15;font-weight:600}
+.codes-row .codes-value{color:#fef3c7;font-family:"JetBrains Mono","Consolas",monospace;letter-spacing:.02em}
 .badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
 .badge-works{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
@@ -161,9 +171,9 @@ button,select{font:inherit}
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", broken:"Не працює", deleted:"Видалений", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
-  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", broken:"Не работает", deleted:"Удалён", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
-  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", broken:"Broken", deleted:"Deleted", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
+  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", broken:"Не працює", deleted:"Видалений", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", codes:"Коди", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
+  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", broken:"Не работает", deleted:"Удалён", checked:"Проверено", pros:"Плюсы", cons:"Минусы", codes:"Коды", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
+  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", broken:"Broken", deleted:"Deleted", checked:"Checked", pros:"Pros", cons:"Cons", codes:"Codes", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
 };
 
 const statusOrder = ["all","works","broken","deleted"];
@@ -171,6 +181,8 @@ const statusOrder = ["all","works","broken","deleted"];
 // ── СПИСОК МОДІВ ─────────────────────────────────────────────
 // status: "works" | "broken" | "deleted"
 // checked: формат ДД.ММ.РРРР
+// tags: масив рядків — кожен окремим чипом
+// codes: {uk,ru,en} — окремий рядок, НЕ в плюсах
 // pros / cons можуть бути [] — тоді блок не показується
 const mods = [
   {
@@ -187,12 +199,17 @@ const mods = [
     discordUrl: "https://discord.gg/ejeXS2JfVE",
     discordIcon: "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
     checked: "24.10.2026",
-    tag: "rauls, banana",
+    tags: ["rauls", "banana"],
+    codes: {
+      uk: "FREEBUX (2К🪙)",
+      ru: "FREEBUX(2К🪙)",
+      en: "FREEBUX(2К🪙)"
+    },
     image: "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
     pros: {
-      uk: ["Коди freebux (2к 🪙)"],
-      ru: ["Коды freebux (2к 🪙)"],
-      en: ["Freebux codes (2k 🪙)"]
+      uk: [],
+      ru: [],
+      en: []
     },
     cons: {
       uk: [],
@@ -208,7 +225,7 @@ const mods = [
     creator: "Ixspan7039",
     creatorUrl: "https://www.roblox.com/users/10797552845/profile",
     checked: "24.10.2026",
-    tag: "modded shop",
+    tags: ["modded shop"],
     image: "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
     creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
     pros: {
@@ -247,6 +264,7 @@ const langButtons = document.querySelectorAll(".lang-btn");
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
 function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
 function pick(obj){ if(!obj) return []; return obj[currentLang] || obj.uk || []; }
+function pickStr(obj){ if(!obj) return ""; return obj[currentLang] || obj.uk || ""; }
 
 function saveLang(lang){
   try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
@@ -268,9 +286,16 @@ function renderMods(){
   modList.innerHTML = visible.map(m => {
     const prosArr = Array.isArray(pick(m.pros)) ? pick(m.pros) : [];
     const consArr = Array.isArray(pick(m.cons)) ? pick(m.cons) : [];
+    const codesVal = pickStr(m.codes);
+    const tagsArr = Array.isArray(m.tags) ? m.tags : [];
     const pros = prosArr.map(p => '<li>'+esc(p)+'</li>').join("");
     const cons = consArr.map(c => '<li>'+esc(c)+'</li>').join("");
-    const tagHtml = m.tag ? '<span class="tag">'+esc(m.tag)+'</span>' : "";
+    const tagsHtml = tagsArr.length
+      ? '<div class="tags-row">'+tagsArr.map(tg => '<span class="tag">'+esc(tg)+'</span>').join("")+'</div>'
+      : '';
+    const codesHtml = codesVal
+      ? '<div class="codes-row"><span class="codes-label">'+esc(t("codes"))+':</span><span class="codes-value">'+esc(codesVal)+'</span></div>'
+      : '';
     const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
     const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
     const groupHtml = (m.group && m.groupUrl)
@@ -306,9 +331,10 @@ function renderMods(){
       +       '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
       +       (discordHtml ? '<span class="dot">•</span>'+discordHtml : '')
       +     '</div>'
-      +     tagHtml
+      +     tagsHtml
       +   '</div>'
       + '</div>'
+      + codesHtml
       + listsHtml
       + '</article>';
   }).join("");
