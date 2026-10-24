@@ -1,45 +1,180 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rivals Hub</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rivals Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#070b14;--panel:rgba(15,23,42,.8);--line:rgba(148,163,184,.18);--text:#e2e8f0;--soft:#a5b4cf;--violet:#7c3aed;--violet-2:#c084fc;--shadow:0 20px 45px rgba(15,23,42,.42)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;position:relative;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,select{font:inherit}
+.glow{position:fixed;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.25;pointer-events:none;z-index:0}
+.glow-a{background:rgba(124,58,237,.55);top:80px;left:-120px}
+.glow-b{background:rgba(34,197,94,.28);right:-60px;bottom:80px}
+.container{width:min(1100px,calc(100% - 32px));margin:0 auto;position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:10;backdrop-filter:blur(18px);background:rgba(7,11,20,.7);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:42px;height:42px;display:grid;place-items:center;font-weight:800;border-radius:12px;background:linear-gradient(135deg,var(--violet),var(--violet-2));box-shadow:var(--shadow)}
+.brand-title{font-weight:800;letter-spacing:-.03em}
+.brand-subtitle{color:var(--soft);font-size:.78rem}
+.lang-switcher{display:flex;align-items:center;gap:6px;margin-left:auto}
+.lang-btn{border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.7);color:var(--soft);border-radius:8px;padding:6px 10px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s ease}
+.lang-btn:hover{color:var(--text);border-color:rgba(196,181,253,.35)}
+.lang-btn.active{background:linear-gradient(135deg,var(--violet),var(--violet-2));color:#fff;border-color:transparent}
+.toolbar{padding:28px 0 14px}
+.filter{display:grid;gap:8px;width:min(320px,100%);color:var(--soft);font-size:.82rem}
+.filter select{width:100%;background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}
+.mod-list{display:grid;gap:22px;padding-bottom:40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-title{margin:0;font-size:clamp(1.3rem,2vw,1.9rem)}
+.card-title a:hover{color:#c4b5fd}
+.card-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--soft);font-size:.82rem;margin-bottom:16px}
+.creator{color:#d8b4fe}
+.creator:hover{text-decoration:underline}
+.card-desc{color:var(--soft);margin:0 0 16px}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.badge-works{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+.badge-works_but_abandoned{background:rgba(250,204,21,.12);color:#facc15;border:1px solid rgba(250,204,21,.3)}
+.badge-under_review{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.3)}
+.badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.badge-archived{background:rgba(100,116,139,.12);color:#cbd5e1;border:1px solid rgba(100,116,139,.3)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tag{padding:6px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.12);color:var(--soft);font-size:.74rem}
+.lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.list-box{padding:16px;border-radius:16px;border:1px solid rgba(148,163,184,.12);background:rgba(148,163,184,.03)}
+.list-box h4{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+.list-box ul{margin:0;padding-left:18px;color:var(--soft)}
+.empty{padding:26px;border-radius:18px;text-align:center;color:var(--soft);background:rgba(148,163,184,.03);border:1px dashed rgba(148,163,184,.2)}
+@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.card-head{flex-direction:column;align-items:flex-start}}
+</style>
 </head>
 <body>
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
 
-  <header class="topbar">
-    <div class="container nav">
-      <div class="brand">
-        <div class="brand-mark">R</div>
-        <div>
-          <div class="brand-title">Rivals Hub</div>
-          <div class="brand-subtitle" id="brandSubtitle">Каталог і статус проєктів</div>
-        </div>
-      </div>
-      <div class="lang-switcher">
-        <button class="lang-btn active" data-lang="uk" type="button">UA</button>
-        <button class="lang-btn" data-lang="ru" type="button">RU</button>
-        <button class="lang-btn" data-lang="en" type="button">EN</button>
+<header class="topbar">
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <div>
+        <div class="brand-title">Rivals Hub</div>
+        <div class="brand-subtitle" id="brandSubtitle">Каталог і статус проєктів</div>
       </div>
     </div>
-  </header>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="uk" type="button">UA</button>
+      <button class="lang-btn" data-lang="ru" type="button">RU</button>
+      <button class="lang-btn" data-lang="en" type="button">EN</button>
+    </div>
+  </div>
+</header>
 
-  <main class="container">
-    <section class="toolbar">
-      <label class="filter">
-        <span id="statusLabel">Статус</span>
-        <select id="statusFilter"></select>
-      </label>
-    </section>
-    <section id="modList" class="mod-list"></section>
-  </main>
+<main class="container">
+  <section class="toolbar">
+    <label class="filter">
+      <span id="statusLabel">Статус</span>
+      <select id="statusFilter"></select>
+    </label>
+  </section>
+  <section id="modList" class="mod-list"></section>
+</main>
 
-  <script src="script.js"></script>
+<script>
+const translations = {
+  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", works_but_abandoned:"Працює, але закинутий", under_review:"Перевіряється", broken:"Не працює", archived:"Архів", creator:"Автор", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус." },
+  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", works_but_abandoned:"Работает, но заброшен", under_review:"Проверяется", broken:"Не работает", archived:"Архив", creator:"Автор", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус." },
+  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", works_but_abandoned:"Works, but abandoned", under_review:"Under review", broken:"Broken", archived:"Archived", creator:"Creator", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status." }
+};
+
+const statusOrder = ["all","works","works_but_abandoned","under_review","broken","archived"];
+
+const mods = [
+  {
+    id: "josh-rivals-modded",
+    title: "Josh's RIVALS MODDED",
+    status: "works_but_abandoned",
+    placeUrl: "https://www.roblox.com/share?code=aca6d5852921d14d803ef0da00774ded&type=ExperienceDetails&stamp=1792819304207",
+    creator: "Ixspan7039",
+    creatorUrl: "https://www.roblox.com/users/10797552845/profile",
+    checked: "2026-10-24",
+    description: "Одна з версій моддед RIVALS з моддед-шопом. Запускається без проблем, але давно не оновлювався.",
+    pros: ["Запускається без проблем","Є моддед-шоп","Стандартні звуки ходьби, стрибків і кліків з оригіналу"],
+    cons: ["Стара версія моду","Повністю платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кейс-скіни, арч-скіни, кристал-скіни, секретні предмети"],
+    tags: ["modded","rivals","roblox","abandoned","shop"]
+  }
+];
+
+let currentLang = "uk";
+
+const brandSubtitle = document.getElementById("brandSubtitle");
+const statusLabel = document.getElementById("statusLabel");
+const statusFilter = document.getElementById("statusFilter");
+const modList = document.getElementById("modList");
+const langButtons = document.querySelectorAll(".lang-btn");
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
+
+function rebuildStatusFilter(){
+  const prev = statusFilter.value || "all";
+  statusFilter.innerHTML = statusOrder.map(v => '<option value="'+v+'">'+esc(t(v))+'</option>').join("");
+  statusFilter.value = prev;
+}
+
+function renderMods(){
+  const selected = statusFilter.value || "all";
+  const visible = mods.filter(m => selected === "all" || m.status === selected);
+  if(visible.length === 0){
+    modList.innerHTML = '<div class="empty"><h3>'+esc(t("empty"))+'</h3><p>'+esc(t("emptyHint"))+'</p></div>';
+    return;
+  }
+  modList.innerHTML = visible.map(m => {
+    const pros = m.pros.map(p => '<li>'+esc(p)+'</li>').join("");
+    const cons = m.cons.map(c => '<li>'+esc(c)+'</li>').join("");
+    const tags = (m.tags||[]).map(tag => '<span class="tag">'+esc(tag)+'</span>').join("");
+    return '<article class="card">'
+      + '<div class="card-head">'
+      +   '<h3 class="card-title"><a href="'+esc(m.placeUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.title)+'</a></h3>'
+      +   '<span class="badge badge-'+esc(m.status)+'">'+esc(t(m.status))+'</span>'
+      + '</div>'
+      + '<div class="card-meta">'
+      +   '<span>'+esc(t("creator"))+': <a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a></span>'
+      +   '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
+      + '</div>'
+      + '<p class="card-desc">'+esc(m.description)+'</p>'
+      + '<div class="tags">'+tags+'</div>'
+      + '<div class="lists">'
+      +   '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
+      +   '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
+      + '</div>'
+      + '</article>';
+  }).join("");
+}
+
+function applyLang(){
+  brandSubtitle.textContent = t("subtitle");
+  statusLabel.textContent = t("status");
+  rebuildStatusFilter();
+  langButtons.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
+  renderMods();
+}
+
+langButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentLang = btn.dataset.lang;
+    applyLang();
+  });
+});
+
+statusFilter.addEventListener("change", renderMods);
+applyLang();
+</script>
 </body>
 </html>
