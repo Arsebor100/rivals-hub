@@ -2,6 +2,62 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8" />
+<!--
+==============================================================
+  RIVALS HUB — ИНСТРУКЦИЯ ДЛЯ ИИ-РЕДАКТОРОВ (НЕ УДАЛЯТЬ)
+==============================================================
+  Файл: единый index.html. Стили и скрипт внутри. Внешних
+  зависимостей нет (кроме Google Fonts Inter). Файлы styles.css,
+  script.js, README.md — удалены, их быть НЕ ДОЛЖНО.
+
+  ЖЁСТКИЕ ПРАВИЛА:
+  1. НЕ переделывай дизайн под себя. Сохраняй текущий стиль,
+     цвета, шрифты, отступы, скругления.
+  2. НЕ добавляй новые секции, кнопки, формы, фреймворки,
+     зависимости, "улучшения", аналитику, cookie-баннеры — если
+     пользователь ЯВНО не попросил.
+  3. НЕ выноси стили/скрипты в отдельные файлы. Всё в одном
+     index.html.
+  4. НЕ удаляй мультиязычность (uk/ru/en), кнопки UA/RU/EN,
+     фильтр статусов и кнопку "Предложить".
+  5. НЕ меняй структуру объекта mod и структуру translations
+     без явного запроса.
+  6. НЕ делай "я так вижу красивее". Делай только то, что
+     просят. Если непонятно — спроси, не додумывай.
+
+  КАК ДОБАВИТЬ НОВЫЙ МОД:
+  - Найди массив `const mods = [...]` внутри <script>.
+  - Скопируй существующий объект (от `{` до `}`) и замени:
+      id          — уникальная строка (латиницей, без пробелов)
+      title       — название мода (не переводится)
+      status      — один из: "works" | "works_but_abandoned" |
+                    "under_review" | "broken" | "archived"
+      placeUrl    — прямая ссылка на игру в Roblox
+      creator     — ник автора (не переводится)
+      creatorUrl  — ссылка на профиль автора
+      checked     — дата проверки "YYYY-MM-DD"
+      description — { uk: "...", ru: "...", en: "..." }
+      pros        — { uk: [..], ru: [..], en: [..] }
+      cons        — { uk: [..], ru: [..], en: [..] }
+  - Все три языка обязательны в description/pros/cons.
+
+  КАК ДОБАВИТЬ ЯЗЫК (например, PL):
+  - В translations добавь ключ pl: { ... } со всеми полями.
+  - В .lang-switcher добавь <button class="lang-btn"
+    data-lang="pl" type="button">PL</button>.
+  - В каждый mod добавь pl в description/pros/cons.
+
+  КОНТАКТ / ПРИЁМ ЗАЯВОК:
+  - Кнопка "Предложить" в <a class="suggest-btn" id="suggestBtn">
+    внутри <section class="toolbar">. Ссылка ведёт на GitHub
+    Issues репозитория Arsebor100/rivals-hub.
+  - Если пользователь захочет email / Discord / Telegram вместо
+    Issues — меняется ТОЛЬКО href у #suggestBtn и текст в
+    translations.suggest. Больше ничего не трогать.
+  - Формат ссылки на Issues (для справки):
+    https://github.com/Arsebor100/rivals-hub/issues/new?title=...&body=...
+==============================================================
+-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rivals Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,9 +83,11 @@ button,select{font:inherit}
 .lang-btn{border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.7);color:var(--soft);border-radius:8px;padding:6px 10px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s ease}
 .lang-btn:hover{color:var(--text);border-color:rgba(196,181,253,.35)}
 .lang-btn.active{background:linear-gradient(135deg,var(--violet),var(--violet-2));color:#fff;border-color:transparent}
-.toolbar{padding:28px 0 14px}
+.toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 0 14px}
 .filter{display:grid;gap:8px;width:min(320px,100%);color:var(--soft);font-size:.82rem}
 .filter select{width:100%;background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}
+.suggest-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(196,181,253,.35);background:rgba(124,58,237,.1);color:#d8b4fe;border-radius:12px;padding:11px 16px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s ease}
+.suggest-btn:hover{background:rgba(124,58,237,.18);border-color:rgba(196,181,253,.55);color:#f3e8ff}
 .mod-list{display:grid;gap:22px;padding-bottom:40px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px}
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
@@ -38,21 +96,19 @@ button,select{font:inherit}
 .card-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--soft);font-size:.82rem;margin-bottom:16px}
 .creator{color:#d8b4fe}
 .creator:hover{text-decoration:underline}
-.card-desc{color:var(--soft);margin:0 0 16px}
+.card-desc{color:var(--soft);margin:0 0 18px}
 .badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
 .badge-works{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .badge-works_but_abandoned{background:rgba(250,204,21,.12);color:#facc15;border:1px solid rgba(250,204,21,.3)}
 .badge-under_review{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.3)}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
 .badge-archived{background:rgba(100,116,139,.12);color:#cbd5e1;border:1px solid rgba(100,116,139,.3)}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
-.tag{padding:6px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.12);color:var(--soft);font-size:.74rem}
 .lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .list-box{padding:16px;border-radius:16px;border:1px solid rgba(148,163,184,.12);background:rgba(148,163,184,.03)}
 .list-box h4{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
 .list-box ul{margin:0;padding-left:18px;color:var(--soft)}
 .empty{padding:26px;border-radius:18px;text-align:center;color:var(--soft);background:rgba(148,163,184,.03);border:1px dashed rgba(148,163,184,.2)}
-@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.card-head{flex-direction:column;align-items:flex-start}}
+@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.card-head{flex-direction:column;align-items:flex-start}.toolbar{flex-direction:column;align-items:stretch}.suggest-btn{justify-content:center}}
 </style>
 </head>
 <body>
@@ -82,19 +138,28 @@ button,select{font:inherit}
       <span id="statusLabel">Статус</span>
       <select id="statusFilter"></select>
     </label>
+    <a class="suggest-btn" id="suggestBtn"
+       href="https://github.com/Arsebor100/rivals-hub/issues/new?title=%D0%9D%D0%BE%D0%B2%D1%8B%D0%B9%20%D0%BC%D0%BE%D0%B4&body=%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%3A%0A%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0%20%D0%BD%D0%B0%20%D0%B8%D0%B3%D1%80%D1%83%3A%0A%D0%90%D0%B2%D1%82%D0%BE%D1%80%3A%0A%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5%3A%0A%D0%9F%D0%BB%D1%8E%D1%81%D1%8B%3A%0A%D0%9C%D0%B8%D0%BD%D1%83%D1%81%D1%8B%3A%0A"
+       target="_blank" rel="noopener noreferrer">
+      <span id="suggestLabel">Предложить мод / дополнение</span>
+    </a>
   </section>
   <section id="modList" class="mod-list"></section>
 </main>
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", works_but_abandoned:"Працює, але закинутий", under_review:"Перевіряється", broken:"Не працює", archived:"Архів", creator:"Автор", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус." },
-  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", works_but_abandoned:"Работает, но заброшен", under_review:"Проверяется", broken:"Не работает", archived:"Архив", creator:"Автор", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус." },
-  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", works_but_abandoned:"Works, but abandoned", under_review:"Under review", broken:"Broken", archived:"Archived", creator:"Creator", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status." }
+  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", works_but_abandoned:"Працює, але закинутий", under_review:"Перевіряється", broken:"Не працює", archived:"Архів", creator:"Автор", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
+  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", works_but_abandoned:"Работает, но заброшен", under_review:"Проверяется", broken:"Не работает", archived:"Архив", creator:"Автор", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
+  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", works_but_abandoned:"Works, but abandoned", under_review:"Under review", broken:"Broken", archived:"Archived", creator:"Creator", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
 };
 
 const statusOrder = ["all","works","works_but_abandoned","under_review","broken","archived"];
 
+// ── СПИСОК МОДОВ ─────────────────────────────────────────────
+// Чтобы добавить новый — скопируй объект { ... } ниже и замени поля.
+// Все три языка (uk/ru/en) в description/pros/cons обязательны.
+// status: "works" | "works_but_abandoned" | "under_review" | "broken" | "archived"
 const mods = [
   {
     id: "josh-rivals-modded",
@@ -104,7 +169,6 @@ const mods = [
     creator: "Ixspan7039",
     creatorUrl: "https://www.roblox.com/users/10797552845/profile",
     checked: "2026-10-24",
-    tags: ["modded","rivals","roblox","abandoned","shop"],
     description: {
       uk: "Одна з версій моддед RIVALS з моддед-шопом. Запускається без проблем, але давно не оновлювався.",
       ru: "Одна из версий моддед RIVALS с моддед-шопом. Запускается без проблем, но давно не обновлялся.",
@@ -122,6 +186,7 @@ const mods = [
     }
   }
 ];
+// ─────────────────────────────────────────────────────────────
 
 let currentLang = "uk";
 
@@ -129,6 +194,7 @@ const brandSubtitle = document.getElementById("brandSubtitle");
 const statusLabel = document.getElementById("statusLabel");
 const statusFilter = document.getElementById("statusFilter");
 const modList = document.getElementById("modList");
+const suggestLabel = document.getElementById("suggestLabel");
 const langButtons = document.querySelectorAll(".lang-btn");
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
@@ -154,7 +220,6 @@ function renderMods(){
     const desc = pick(m.description);
     const pros = (Array.isArray(prosArr) ? prosArr : []).map(p => '<li>'+esc(p)+'</li>').join("");
     const cons = (Array.isArray(consArr) ? consArr : []).map(c => '<li>'+esc(c)+'</li>').join("");
-    const tags = (m.tags||[]).map(tag => '<span class="tag">'+esc(tag)+'</span>').join("");
     return '<article class="card">'
       + '<div class="card-head">'
       +   '<h3 class="card-title"><a href="'+esc(m.placeUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.title)+'</a></h3>'
@@ -165,7 +230,6 @@ function renderMods(){
       +   '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
       + '</div>'
       + '<p class="card-desc">'+esc(desc)+'</p>'
-      + '<div class="tags">'+tags+'</div>'
       + '<div class="lists">'
       +   '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
       +   '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
@@ -177,6 +241,7 @@ function renderMods(){
 function applyLang(){
   brandSubtitle.textContent = t("subtitle");
   statusLabel.textContent = t("status");
+  suggestLabel.textContent = t("suggest");
   rebuildStatusFilter();
   langButtons.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
   renderMods();
