@@ -7,8 +7,15 @@
   RIVALS HUB — ІНСТРУКЦІЯ ДЛЯ ІІ-РЕДАКТОРІВ (НЕ ВИДАЛЯТИ)
 ==============================================================
   Файл єдиний: index.html. Стилі та скрипт всередині.
-  Зовнішніх залежностей немає (тільки Google Fonts Inter).
-  styles.css, script.js, README.md — бути НЕ ПОВИННО.
+
+  ЛОКАЛЬНІ АСЕТИ (лежать у корені репо):
+    - Untitled6.png                                — лого Rivals
+    - Arseniy_Borisenko.png                        — (резерв)
+    - Images_Logo_N_512_13854780042.png            — частина лого (N)
+    - Images_Logo_G_512_13854780213.png            — частина лого (G)
+    - Rubik-*.ttf                                  — шрифт Rubik
+    - 2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg — звук лоадера
+    - click_sound_177266782.ogg                    — звук кліку
 
   ЖОРСТКІ ПРАВИЛА:
   1. НЕ переробляй дизайн під себе. Зберігай кольори, шрифти,
@@ -17,66 +24,94 @@
      залежності, аналітику, cookie-банери — якщо користувач
      ЯВНО не попросив.
   3. НЕ винось стилі/скрипт в окремі файли.
-  4. НЕ видаляй мультиязычність (uk/ru/en), кнопки UA/RU/EN,
-     фільтр статусів, кнопку "Запропонувати", теги, логотип гри,
-     аватар автора, групу, Discord, блок кодів.
-  5. НЕ видаляй збереження мови в localStorage (ключ
-     "rivalsHubLang").
-  6. НЕ додавай поле "опис" назад у картку — воно навмисно
-     видалено.
+  4. НЕ видаляй мультиязычність, кнопки UA/RU/EN, фільтр
+     статусів, кнопку "Запропонувати", теги, логотип гри,
+     аватар автора, групу, Discord, блок кодів, лоадер.
+  5. НЕ видаляй збереження мови в localStorage ("rivalsHubLang").
+  6. НЕ додавай поле "опис" назад у картку — навмисно видалено.
   7. Блок "Плюси" / "Мінуси" ховається, якщо масив порожній.
-     Другий блок тоді на всю ширину.
-  8. Блок "Коди" — окрема строка, НЕ в плюсах. Ховається, якщо
-     codes порожній. НЕ переносити коди в pros.
+  8. Блок "Коди" — окрема строка, НЕ в плюсах.
   9. Теги — масив tags[], кожен тег окремим чипом.
- 10. НЕ роби "я так бачу красивіше". Роби лише те, що
-     просять. Незрозуміло — спитай, не додумуй.
+ 10. НЕ роби "я так бачу красивіше". Роби лише те, що просять.
 
   СТАТУСИ (тільки ці три):
     "works" | "broken" | "deleted"
 
-  ФОРМАТ ДАТИ: ДД.ММ.РРРР (наприклад, 24.10.2026)
+  ФОРМАТ ДАТИ: ДД.ММ.РРРР
 
-  ПОЛЯ МОДА (усі — в одному об'єкті в const mods):
-    id              — унікальний рядок латиницею
-    title           — назва (не перекладається)
-    status          — "works" | "broken" | "deleted"
-    placeUrl        — пряме посилання на гру Roblox
-    creator         — нік (не перекладається)
-    creatorUrl      — профіль
-    creatorAvatar   — аватар автора (rbxcdn) — опційно
-    group           — назва групи — опційно
-    groupUrl        — посилання на групу — опційно
-    groupAvatar     — логотип групи — опційно
-    discordUrl      — посилання на Discord — опційно
-    discordIcon     — іконка Discord — опційно
-    checked         — "ДД.ММ.РРРР"
-    tags            — масив рядків, напр. ["rauls", "banana"], може бути []
-    codes           — {uk,ru,en} — рядок з кодами, напр. "2k 🪙".
-                      Порожній/відсутній — блок не показується.
-                      НЕ переносити коди в pros.
-    image           — логотип гри (rbxcdn) — опційно
-    pros {uk,ru,en} — масиви рядків, може бути []
-    cons {uk,ru,en} — масиви рядків, може бути []
+  ЛОАДЕР:
+    - Показується при заході (один раз за сесію, sessionStorage).
+    - Логотип Untitled6.png з scale-in анімацією + смуга прогресу.
+    - Через ~1.8с плавно зникає.
+    - Звук: 2102001_..._6384899588.ogg (грає після першої взаємодії,
+      бо autoplay заблоковано).
+
+  ПОЛЯ МОДА:
+    id, title, status, placeUrl, creator, creatorUrl,
+    creatorAvatar, group, groupUrl, groupAvatar,
+    discordUrl, discordIcon, checked, tags[], codes, image,
+    pros {uk,ru,en}, cons {uk,ru,en}
 
   КОНТАКТ / ПРИЙОМ ЗАЯВОК:
     #suggestBtn — mailto:arsebor100@gmail.com.
-    Змінити канал = змінити ТІЛЬКИ href і translations.suggest.
-
-  У МАЙБУТНЬОМУ (не зараз, не роби без прохання):
-    - шрифт у стилі Rivals
-    - звуки Rivals (Audio API)
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rivals Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-:root{--bg:#070b14;--panel:rgba(15,23,42,.8);--line:rgba(148,163,184,.18);--text:#e2e8f0;--soft:#a5b4cf;--violet:#7c3aed;--violet-2:#c084fc;--shadow:0 20px 45px rgba(15,23,42,.42)}
+/* ── ЛОКАЛЬНИЙ ШРИФТ RUBIK ── */
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-Regular_12187288714.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-Medium_12187271237.ttf') format('truetype');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-SemiBold_12187320363.ttf') format('truetype');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-Bold_12187303601.ttf') format('truetype');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-ExtraBold_12187262242.ttf') format('truetype');
+  font-weight:800;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Rubik';
+  src:url('./Rubik-Black_12187280273.ttf') format('truetype');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+:root{
+  --bg:#070b14;
+  --panel:rgba(15,23,42,.8);
+  --line:rgba(148,163,184,.18);
+  --text:#e2e8f0;
+  --soft:#a5b4cf;
+  --violet:#7c3aed;
+  --violet-2:#c084fc;
+  --shadow:0 20px 45px rgba(15,23,42,.42);
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;position:relative;overflow-x:hidden}
+body{
+  margin:0;
+  font-family:'Rubik',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
 a{color:inherit;text-decoration:none}
 button,select{font:inherit}
 .glow{position:fixed;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.25;pointer-events:none;z-index:0}
@@ -86,28 +121,91 @@ button,select{font:inherit}
 .topbar{position:sticky;top:0;z-index:10;backdrop-filter:blur(18px);background:rgba(7,11,20,.7);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
 .brand{display:flex;align-items:center;gap:14px}
-.brand-mark{width:42px;height:42px;display:grid;place-items:center;font-weight:800;border-radius:12px;background:linear-gradient(135deg,var(--violet),var(--violet-2));box-shadow:var(--shadow)}
+.brand-mark{
+  width:42px;height:42px;display:grid;place-items:center;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--violet),var(--violet-2));
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.brand-mark img{width:100%;height:100%;object-fit:contain;padding:6px}
 .brand-title{font-weight:800;letter-spacing:-.03em}
 .brand-subtitle{color:var(--soft);font-size:.78rem}
 .lang-switcher{display:flex;align-items:center;gap:6px;margin-left:auto}
-.lang-btn{border:1px solid rgba(148,163,184,.2);background:rgba(15,23,42,.7);color:var(--soft);border-radius:8px;padding:6px 10px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s ease}
+.lang-btn{
+  border:1px solid rgba(148,163,184,.2);
+  background:rgba(15,23,42,.7);
+  color:var(--soft);
+  border-radius:8px;
+  padding:6px 10px;
+  font-size:.72rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s ease;
+}
 .lang-btn:hover{color:var(--text);border-color:rgba(196,181,253,.35)}
-.lang-btn.active{background:linear-gradient(135deg,var(--violet),var(--violet-2));color:#fff;border-color:transparent}
+.lang-btn.active{
+  background:linear-gradient(135deg,var(--violet),var(--violet-2));
+  color:#fff;
+  border-color:transparent;
+}
 .toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 0 14px}
 .filter{display:grid;gap:8px;width:min(320px,100%);color:var(--soft);font-size:.82rem}
-.filter select{width:100%;background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}
-.suggest-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(196,181,253,.35);background:rgba(124,58,237,.1);color:#d8b4fe;border-radius:12px;padding:11px 16px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s ease}
-.suggest-btn:hover{background:rgba(124,58,237,.18);border-color:rgba(196,181,253,.55);color:#f3e8ff}
+.filter select{
+  width:100%;
+  background:rgba(15,23,42,.8);
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:12px;
+  padding:12px 14px;
+  color:var(--text);
+  outline:none;
+}
+.suggest-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(196,181,253,.35);
+  background:rgba(124,58,237,.1);
+  color:#d8b4fe;
+  border-radius:12px;
+  padding:11px 16px;
+  font-size:.82rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.suggest-btn:hover{
+  background:rgba(124,58,237,.18);
+  border-color:rgba(196,181,253,.55);
+  color:#f3e8ff;
+}
 .mod-list{display:grid;gap:22px;padding-bottom:40px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  padding:22px;
+}
 .card-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
-.thumb{width:88px;height:88px;border-radius:16px;object-fit:cover;flex-shrink:0;background:rgba(148,163,184,.08);border:1px solid var(--line)}
+.thumb{
+  width:88px;height:88px;
+  border-radius:16px;
+  object-fit:cover;
+  flex-shrink:0;
+  background:rgba(148,163,184,.08);
+  border:1px solid var(--line);
+}
 .head-body{flex:1;min-width:0}
 .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
 .card-title{margin:0;font-size:clamp(1.2rem,2vw,1.6rem)}
 .card-title a:hover{color:#c4b5fd}
 .card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--soft);font-size:.82rem;margin-bottom:10px}
-.avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;background:rgba(148,163,184,.1);border:1px solid var(--line)}
+.avatar{
+  width:22px;height:22px;
+  border-radius:50%;
+  object-fit:cover;
+  background:rgba(148,163,184,.1);
+  border:1px solid var(--line);
+}
 .avatar.group{width:18px;height:18px;border-radius:6px}
 .creator,.group{color:#d8b4fe;display:inline-flex;align-items:center;gap:6px}
 .creator:hover,.group:hover{text-decoration:underline}
@@ -116,31 +214,155 @@ button,select{font:inherit}
 .discord-icon{width:20px;height:20px;object-fit:contain;border-radius:6px}
 .dot{color:var(--soft);opacity:.6}
 .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
-.codes-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.22);margin-bottom:16px;font-size:.82rem;color:#fde68a}
+.tag{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(148,163,184,.08);
+  border:1px solid rgba(148,163,184,.14);
+  color:var(--soft);
+  font-size:.72rem;
+}
+.codes-row{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  background:rgba(250,204,21,.06);
+  border:1px solid rgba(250,204,21,.22);
+  margin-bottom:16px;
+  font-size:.82rem;
+  color:#fde68a;
+}
 .codes-row .codes-label{color:#facc15;font-weight:600}
-.codes-row .codes-value{color:#fef3c7;font-family:"JetBrains Mono","Consolas",monospace;letter-spacing:.02em}
-.badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.codes-row .codes-value{
+  color:#fef3c7;
+  font-family:'Rubik',monospace;
+  letter-spacing:.02em;
+}
+.badge{
+  display:inline-flex;align-items:center;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:.72rem;
+  font-weight:700;
+  white-space:nowrap;
+}
 .badge-works{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
 .badge-deleted{background:rgba(100,116,139,.12);color:#cbd5e1;border:1px solid rgba(100,116,139,.3)}
 .lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .lists.single{grid-template-columns:1fr}
-.list-box{padding:16px;border-radius:16px;border:1px solid rgba(148,163,184,.12);background:rgba(148,163,184,.03)}
-.list-box h4{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+.list-box{
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,.12);
+  background:rgba(148,163,184,.03);
+}
+.list-box h4{
+  margin:0 0 12px;
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--soft);
+}
 .list-box ul{margin:0;padding-left:18px;color:var(--soft)}
-.empty{padding:26px;border-radius:18px;text-align:center;color:var(--soft);background:rgba(148,163,184,.03);border:1px dashed rgba(148,163,184,.2)}
-@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.suggest-btn{justify-content:center}.card-head{gap:12px}.thumb{width:64px;height:64px;border-radius:12px}.title-row{flex-direction:column;align-items:flex-start;gap:8px}}
+.empty{
+  padding:26px;
+  border-radius:18px;
+  text-align:center;
+  color:var(--soft);
+  background:rgba(148,163,184,.03);
+  border:1px dashed rgba(148,163,184,.2);
+}
+
+/* ── LOADER ── */
+.loader{
+  position:fixed;inset:0;z-index:9999;
+  background:#05070d;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  opacity:1;
+  transition:opacity .5s ease;
+  pointer-events:all;
+}
+.loader.hide{opacity:0;pointer-events:none}
+.loader::before{
+  content:"";
+  position:absolute;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(124,58,237,.35), transparent 65%);
+  filter:blur(40px);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  animation:loaderPulse 2.4s ease-in-out infinite;
+}
+.loader-logo-img{
+  position:relative;
+  width:128px;height:128px;
+  object-fit:contain;
+  transform:scale(.4);
+  opacity:0;
+  animation:loaderIn .6s cubic-bezier(.2,.9,.3,1.4) forwards;
+  filter:drop-shadow(0 20px 60px rgba(124,58,237,.55));
+}
+.loader-bar{
+  position:relative;
+  width:220px;height:4px;
+  border-radius:999px;
+  background:rgba(148,163,184,.12);
+  overflow:hidden;
+}
+.loader-bar-fill{
+  position:absolute;inset:0 auto 0 0;
+  width:0%;
+  background:linear-gradient(90deg,var(--violet),var(--violet-2));
+  border-radius:999px;
+  transition:width .15s linear;
+}
+.loader-text{
+  margin-top:-8px;
+  color:var(--soft);
+  font-size:.8rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.55;
+}
+@keyframes loaderIn{to{transform:scale(1);opacity:1}}
+@keyframes loaderPulse{
+  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+}
+
+@media (max-width:720px){
+  .nav{flex-wrap:wrap}
+  .lists{grid-template-columns:1fr}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .suggest-btn{justify-content:center}
+  .card-head{gap:12px}
+  .thumb{width:64px;height:64px;border-radius:12px}
+  .title-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .loader-logo-img{width:96px;height:96px}
+  .loader-bar{width:180px}
+}
 </style>
 </head>
 <body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <img src="./Untitled6.png" alt="Rivals" class="loader-logo-img" />
+  <div class="loader-bar"><div class="loader-bar-fill" id="loaderFill"></div></div>
+  <div class="loader-text" id="loaderText">Loading…</div>
+</div>
+
 <div class="glow glow-a"></div>
 <div class="glow glow-b"></div>
 
 <header class="topbar">
   <div class="container nav">
     <div class="brand">
-      <div class="brand-mark">R</div>
+      <div class="brand-mark"><img src="./Untitled6.png" alt="R" /></div>
       <div>
         <div class="brand-title">Rivals Hub</div>
         <div class="brand-subtitle" id="brandSubtitle">Каталог і статус проєктів</div>
@@ -171,19 +393,38 @@ button,select{font:inherit}
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", broken:"Не працює", deleted:"Видалений", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", codes:"Коди", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
-  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", broken:"Не работает", deleted:"Удалён", checked:"Проверено", pros:"Плюсы", cons:"Минусы", codes:"Коды", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
-  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", broken:"Broken", deleted:"Deleted", checked:"Checked", pros:"Pros", cons:"Cons", codes:"Codes", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
+  uk: {
+    subtitle:"Каталог і статус проєктів",
+    status:"Статус", all:"Усі",
+    works:"Працює", broken:"Не працює", deleted:"Видалений",
+    checked:"Перевірено", pros:"Плюси", cons:"Мінуси", codes:"Коди",
+    empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.",
+    suggest:"Запропонувати мод / доповнення",
+    loading:"Завантаження…"
+  },
+  ru: {
+    subtitle:"Каталог и статус проектов",
+    status:"Статус", all:"Все",
+    works:"Работает", broken:"Не работает", deleted:"Удалён",
+    checked:"Проверено", pros:"Плюсы", cons:"Минусы", codes:"Коды",
+    empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.",
+    suggest:"Предложить мод / дополнение",
+    loading:"Загрузка…"
+  },
+  en: {
+    subtitle:"Catalog & status tracker",
+    status:"Status", all:"All",
+    works:"Works", broken:"Broken", deleted:"Deleted",
+    checked:"Checked", pros:"Pros", cons:"Cons", codes:"Codes",
+    empty:"No entries found", emptyHint:"Try another status.",
+    suggest:"Suggest a mod / addition",
+    loading:"Loading…"
+  }
 };
 
 const statusOrder = ["all","works","broken","deleted"];
 
 // ── СПИСОК МОДІВ ─────────────────────────────────────────────
-// status: "works" | "broken" | "deleted"
-// checked: формат ДД.ММ.РРРР
-// tags: масив рядків — кожен окремим чипом
-// codes: {uk,ru,en} — окремий рядок, НЕ в плюсах
-// pros / cons можуть бути [] — тоді блок не показується
 const mods = [
   {
     id: "a-rivals",
@@ -201,21 +442,13 @@ const mods = [
     checked: "24.10.2026",
     tags: ["rauls", "banana"],
     codes: {
-      uk: "FREEBUX (2К🪙)",
-      ru: "FREEBUX (2К🪙)",
-      en: "FREEBUX (2К🪙)"
+      uk: "FREEBUX — 2к монет",
+      ru: "FREEBUX — 2к монет",
+      en: "FREEBUX — 2k coins"
     },
     image: "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
-    pros: {
-      uk: [],
-      ru: [],
-      en: []
-    },
-    cons: {
-      uk: [],
-      ru: [],
-      en: []
-    }
+    pros: { uk: [], ru: [], en: [] },
+    cons: { uk: [], ru: [], en: [] }
   },
   {
     id: "josh-rivals-modded",
@@ -228,21 +461,57 @@ const mods = [
     tags: ["modded shop"],
     image: "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
     creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    pros: {
-      uk: [],
-      ru: [],
-      en: []
-    },
+    pros: { uk: [], ru: [], en: [] },
     cons: {
-      uk: ["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
-      ru: ["Платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
-      en: ["Paid admin panel","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
+      uk: [
+        "Платна адмін-панель",
+        "Сміттєві адмін-гармати та скіни за робукси",
+        "Немає ранкед-шопу та інспектів",
+        "Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"
+      ],
+      ru: [
+        "Платная админ-панель",
+        "Мусорные админ-пушки и скины за робуксы",
+        "Нет ранкед-шопа и инспектов",
+        "Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"
+      ],
+      en: [
+        "Paid admin panel",
+        "Junk admin guns and skins for Robux",
+        "No ranked shop or inspects",
+        "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"
+      ]
     }
   }
 ];
 // ─────────────────────────────────────────────────────────────
 
 const LANG_KEY = "rivalsHubLang";
+const LOADER_KEY = "rivalsHubLoaded";
+
+// ── ЗВУКИ (ЛОКАЛЬНІ) ─────────────────────────────────────────
+const SOUND_INTRO = "./2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg";
+const SOUND_CLICK = "./click_sound_177266782.ogg";
+let soundUnlocked = false;
+
+function tryPlaySound(url, vol){
+  try {
+    const a = new Audio(url);
+    a.volume = vol;
+    const p = a.play();
+    if (p && p.catch) p.catch(()=>{});
+  } catch(e) {}
+}
+
+function unlockSounds(){
+  if (soundUnlocked) return;
+  soundUnlocked = true;
+  tryPlaySound(SOUND_INTRO, 0.35);
+}
+
+function playClick(){
+  tryPlaySound(SOUND_CLICK, 0.25);
+}
 
 function loadSavedLang(){
   try {
@@ -259,60 +528,98 @@ const statusLabel = document.getElementById("statusLabel");
 const statusFilter = document.getElementById("statusFilter");
 const modList = document.getElementById("modList");
 const suggestLabel = document.getElementById("suggestLabel");
+const loaderText = document.getElementById("loaderText");
 const langButtons = document.querySelectorAll(".lang-btn");
 
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
-function pick(obj){ if(!obj) return []; return obj[currentLang] || obj.uk || []; }
-function pickStr(obj){ if(!obj) return ""; return obj[currentLang] || obj.uk || ""; }
-
+function esc(s){
+  return String(s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+function t(k){
+  return (translations[currentLang] && translations[currentLang][k]) || k;
+}
+function pick(obj){
+  if(!obj) return [];
+  return obj[currentLang] || obj.uk || [];
+}
+function pickStr(obj){
+  if(!obj) return "";
+  return obj[currentLang] || obj.uk || "";
+}
 function saveLang(lang){
   try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
 }
 
 function rebuildStatusFilter(){
   const prev = statusFilter.value || "all";
-  statusFilter.innerHTML = statusOrder.map(v => '<option value="'+v+'">'+esc(t(v))+'</option>').join("");
+  statusFilter.innerHTML = statusOrder
+    .map(v => '<option value="'+v+'">'+esc(t(v))+'</option>')
+    .join("");
   statusFilter.value = prev;
 }
 
 function renderMods(){
   const selected = statusFilter.value || "all";
   const visible = mods.filter(m => selected === "all" || m.status === selected);
+
   if(visible.length === 0){
-    modList.innerHTML = '<div class="empty"><h3>'+esc(t("empty"))+'</h3><p>'+esc(t("emptyHint"))+'</p></div>';
+    modList.innerHTML =
+      '<div class="empty"><h3>'+esc(t("empty"))+'</h3><p>'+esc(t("emptyHint"))+'</p></div>';
     return;
   }
+
   modList.innerHTML = visible.map(m => {
     const prosArr = Array.isArray(pick(m.pros)) ? pick(m.pros) : [];
     const consArr = Array.isArray(pick(m.cons)) ? pick(m.cons) : [];
     const codesVal = pickStr(m.codes);
     const tagsArr = Array.isArray(m.tags) ? m.tags : [];
+
     const pros = prosArr.map(p => '<li>'+esc(p)+'</li>').join("");
     const cons = consArr.map(c => '<li>'+esc(c)+'</li>').join("");
+
     const tagsHtml = tagsArr.length
       ? '<div class="tags-row">'+tagsArr.map(tg => '<span class="tag">'+esc(tg)+'</span>').join("")+'</div>'
       : '';
+
     const codesHtml = codesVal
       ? '<div class="codes-row"><span class="codes-label">'+esc(t("codes"))+':</span><span class="codes-value">'+esc(codesVal)+'</span></div>'
       : '';
-    const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
-    const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
+
+    const thumbHtml = m.image
+      ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />'
+      : '';
+
+    const avatarHtml = m.creatorAvatar
+      ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />'
+      : '';
+
     const groupHtml = (m.group && m.groupUrl)
       ? '<span class="dot">•</span><a class="group" href="'+esc(m.groupUrl)+'" target="_blank" rel="noopener noreferrer">'
         + (m.groupAvatar ? '<img class="avatar group" src="'+esc(m.groupAvatar)+'" alt="" loading="lazy" />' : '')
         + esc(m.group)+'</a>'
       : '';
+
     const discordHtml = m.discordUrl
       ? '<a class="discord-link" href="'+esc(m.discordUrl)+'" target="_blank" rel="noopener noreferrer" title="Discord">'
         + (m.discordIcon ? '<img class="discord-icon" src="'+esc(m.discordIcon)+'" alt="Discord" loading="lazy" />' : 'Discord')
         + '</a>'
       : '';
 
-    const prosBox = prosArr.length ? '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>' : '';
-    const consBox = consArr.length ? '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>' : '';
+    const prosBox = prosArr.length
+      ? '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
+      : '';
+
+    const consBox = consArr.length
+      ? '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
+      : '';
+
     const listsHtml = (prosArr.length || consArr.length)
-      ? '<div class="' + ((prosArr.length && consArr.length) ? 'lists' : 'lists single') + '">' + prosBox + consBox + '</div>'
+      ? '<div class="' + ((prosArr.length && consArr.length) ? 'lists' : 'lists single') + '">'
+        + prosBox + consBox + '</div>'
       : '';
 
     return '<article class="card">'
@@ -344,6 +651,7 @@ function applyLang(){
   brandSubtitle.textContent = t("subtitle");
   statusLabel.textContent = t("status");
   suggestLabel.textContent = t("suggest");
+  if (loaderText) loaderText.textContent = t("loading");
   document.documentElement.lang = currentLang;
   rebuildStatusFilter();
   langButtons.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
@@ -355,10 +663,49 @@ langButtons.forEach(btn => {
     currentLang = btn.dataset.lang;
     saveLang(currentLang);
     applyLang();
+    unlockSounds();
   });
 });
 
 statusFilter.addEventListener("change", renderMods);
+
+// Клік по будь-якому посиланню/кнопці — звук кліку + розблокування аудіо
+document.addEventListener("click", (e) => {
+  unlockSounds();
+  const target = e.target.closest("a, button");
+  if (target) playClick();
+}, { once: false });
+
+document.addEventListener("touchstart", unlockSounds, { once: true });
+
+// ── LOADER ──────────────────────────────────────────────────
+(function runLoader(){
+  const loader = document.getElementById("loader");
+  const fill = document.getElementById("loaderFill");
+  let shown = false;
+  try { shown = sessionStorage.getItem(LOADER_KEY) === "1"; } catch(e) {}
+
+  if (shown) {
+    loader.remove();
+    return;
+  }
+
+  let p = 0;
+  const tick = setInterval(() => {
+    p += Math.random() * 12 + 6;
+    if (p > 100) p = 100;
+    fill.style.width = p + "%";
+    if (p >= 100) {
+      clearInterval(tick);
+      setTimeout(() => {
+        loader.classList.add("hide");
+        try { sessionStorage.setItem(LOADER_KEY, "1"); } catch(e) {}
+        setTimeout(() => loader.remove(), 600);
+      }, 260);
+    }
+  }, 100);
+})();
+
 applyLang();
 </script>
 </body>
