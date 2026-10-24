@@ -18,31 +18,36 @@
      ЯВНО не попросил.
   3. НЕ выноси стили/скрипты в отдельные файлы.
   4. НЕ удаляй мультиязычность (uk/ru/en), кнопки UA/RU/EN,
-     фильтр статусов, кнопку "Предложить", тег.
-  5. НЕ делай "я так вижу красивее". Делай только то, что
+     фильтр статусов, кнопку "Предложить", тег, логотип игры,
+     аватар автора.
+  5. НЕ добавляй поле "описание" обратно в карточку — оно
+     намеренно удалено.
+  6. НЕ делай "я так вижу красивее". Делай только то, что
      просят. Непонятно — спроси, не додумывай.
 
-  СТАТУСЫ (только эти три, других нет):
+  СТАТУСЫ (только эти три):
     "works"    — Работает / Працює / Works
     "broken"   — Не работает / Не працює / Broken
     "deleted"  — Удалён / Видалений / Deleted
 
   КАК ДОБАВИТЬ НОВЫЙ МОД:
-    Скопируй объект в массиве `const mods = [...]` и замени поля:
-      id, title, status (см. выше), placeUrl, creator,
-      creatorUrl, checked ("YYYY-MM-DD"), tag (строка, напр. "modded shop"),
-      description {uk,ru,en}, pros {uk,ru,en}, cons {uk,ru,en}.
-    Все три языка обязательны.
+    Скопируй объект в массиве `const mods = [...]` и замени:
+      id, title, status, placeUrl, creator, creatorUrl,
+      checked ("YYYY-MM-DD"), tag (строка, напр. "modded shop"),
+      image          — ссылка на логотип игры (rbxcdn)
+      creatorAvatar  — ссылка на аватар автора (rbxcdn headshot)
+      pros {uk,ru,en}, cons {uk,ru,en}
+    Все три языка в pros/cons обязательны.
 
   КАК ДОБАВИТЬ ЯЗЫК (например, PL):
     В translations добавь `pl: { ... }` со всеми полями,
     в .lang-switcher добавь кнопку data-lang="pl",
-    в каждый mod добавь `pl` в description/pros/cons.
+    в каждый mod добавь `pl` в pros/cons.
 
   КОНТАКТ / ПРИЁМ ЗАЯВОК:
     Кнопка #suggestBtn — <a href="mailto:arsebor100@gmail.com?...">.
-    Сменить канал (Discord, Telegram, форма) = поменять ТОЛЬКО href
-    у #suggestBtn и текст translations.suggest. Больше ничего.
+    Сменить канал = поменять ТОЛЬКО href у #suggestBtn и текст
+    translations.suggest.
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -77,14 +82,18 @@ button,select{font:inherit}
 .suggest-btn:hover{background:rgba(124,58,237,.18);border-color:rgba(196,181,253,.55);color:#f3e8ff}
 .mod-list{display:grid;gap:22px;padding-bottom:40px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px}
-.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
-.card-title{margin:0;font-size:clamp(1.3rem,2vw,1.9rem)}
+.card-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+.thumb{width:88px;height:88px;border-radius:16px;object-fit:cover;flex-shrink:0;background:rgba(148,163,184,.08);border:1px solid var(--line)}
+.head-body{flex:1;min-width:0}
+.title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-title{margin:0;font-size:clamp(1.2rem,2vw,1.6rem)}
 .card-title a:hover{color:#c4b5fd}
-.card-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--soft);font-size:.82rem;margin-bottom:12px}
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--soft);font-size:.82rem;margin-bottom:10px}
+.avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;background:rgba(148,163,184,.1);border:1px solid var(--line)}
 .creator{color:#d8b4fe}
 .creator:hover{text-decoration:underline}
-.card-desc{color:var(--soft);margin:0 0 16px}
-.tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem;margin-bottom:18px}
+.dot{color:var(--soft);opacity:.6}
+.tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
 .badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
 .badge-works{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
@@ -94,7 +103,7 @@ button,select{font:inherit}
 .list-box h4{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
 .list-box ul{margin:0;padding-left:18px;color:var(--soft)}
 .empty{padding:26px;border-radius:18px;text-align:center;color:var(--soft);background:rgba(148,163,184,.03);border:1px dashed rgba(148,163,184,.2)}
-@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.card-head{flex-direction:column;align-items:flex-start}.toolbar{flex-direction:column;align-items:stretch}.suggest-btn{justify-content:center}}
+@media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.suggest-btn{justify-content:center}.card-head{gap:12px}.thumb{width:64px;height:64px;border-radius:12px}.title-row{flex-direction:column;align-items:flex-start;gap:8px}}
 </style>
 </head>
 <body>
@@ -125,7 +134,7 @@ button,select{font:inherit}
       <select id="statusFilter"></select>
     </label>
     <a class="suggest-btn" id="suggestBtn"
-       href="mailto:arsebor100@gmail.com?subject=Rivals%20Hub%20suggestion&body=Name%3A%0APlace%20URL%3A%0ACreator%3A%0ADescription%3A%0APros%3A%0ACons%3A%0A"
+       href="mailto:arsebor100@gmail.com?subject=Rivals%20Hub%20suggestion&body=Roblox%20link%3A%0Ahttps%3A%2F%2Fwww.roblox.com%2Fgames%2F17625359962%2FRIVALS%20(example)"
        target="_blank" rel="noopener noreferrer">
       <span id="suggestLabel">Предложить мод / дополнение</span>
     </a>
@@ -135,9 +144,9 @@ button,select{font:inherit}
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", broken:"Не працює", deleted:"Видалений", creator:"Автор", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
-  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", broken:"Не работает", deleted:"Удалён", creator:"Автор", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
-  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", broken:"Broken", deleted:"Deleted", creator:"Creator", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
+  uk: { subtitle:"Каталог і статус проєктів", status:"Статус", all:"Усі", works:"Працює", broken:"Не працює", deleted:"Видалений", checked:"Перевірено", pros:"Плюси", cons:"Мінуси", empty:"Нічого не знайдено", emptyHint:"Спробуй інший статус.", suggest:"Запропонувати мод / доповнення" },
+  ru: { subtitle:"Каталог и статус проектов", status:"Статус", all:"Все", works:"Работает", broken:"Не работает", deleted:"Удалён", checked:"Проверено", pros:"Плюсы", cons:"Минусы", empty:"Ничего не найдено", emptyHint:"Попробуй другой статус.", suggest:"Предложить мод / дополнение" },
+  en: { subtitle:"Catalog & status tracker", status:"Status", all:"All", works:"Works", broken:"Broken", deleted:"Deleted", checked:"Checked", pros:"Pros", cons:"Cons", empty:"No entries found", emptyHint:"Try another status.", suggest:"Suggest a mod / addition" }
 };
 
 const statusOrder = ["all","works","broken","deleted"];
@@ -154,20 +163,17 @@ const mods = [
     creatorUrl: "https://www.roblox.com/users/10797552845/profile",
     checked: "2026-10-24",
     tag: "modded shop",
-    description: {
-      uk: "Моддед-версія RIVALS з моддед-шопом. Запускається без проблем, але давно не оновлювалася.",
-      ru: "Моддед-версия RIVALS с моддед-шопом. Запускается без проблем, но давно не обновлялась.",
-      en: "Modded version of RIVALS with a modded shop. Launches without issues, but hasn't been updated in a long time."
-    },
+    image: "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
+    creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
     pros: {
       uk: ["Стандартні звуки ходьби, стрибків і кліків з оригіналу"],
       ru: ["Стандартные звуки ходьбы, прыжков и кликов из оригинала"],
       en: ["Original walking, jumping and UI click sounds"]
     },
     cons: {
-      uk: ["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кейс-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
-      ru: ["Платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кейс-скины (не считая тех что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
-      en: ["Paid admin panel","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, case skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
+      uk: ["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
+      ru: ["Платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
+      en: ["Paid admin panel","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
     }
   }
 ];
@@ -202,21 +208,28 @@ function renderMods(){
   modList.innerHTML = visible.map(m => {
     const prosArr = pick(m.pros);
     const consArr = pick(m.cons);
-    const desc = pick(m.description);
     const pros = (Array.isArray(prosArr) ? prosArr : []).map(p => '<li>'+esc(p)+'</li>').join("");
     const cons = (Array.isArray(consArr) ? consArr : []).map(c => '<li>'+esc(c)+'</li>').join("");
-    const tagHtml = m.tag ? '<div><span class="tag">'+esc(m.tag)+'</span></div>' : "";
+    const tagHtml = m.tag ? '<span class="tag">'+esc(m.tag)+'</span>' : "";
+    const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
+    const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
     return '<article class="card">'
       + '<div class="card-head">'
-      +   '<h3 class="card-title"><a href="'+esc(m.placeUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.title)+'</a></h3>'
-      +   '<span class="badge badge-'+esc(m.status)+'">'+esc(t(m.status))+'</span>'
+      +   thumbHtml
+      +   '<div class="head-body">'
+      +     '<div class="title-row">'
+      +       '<h3 class="card-title"><a href="'+esc(m.placeUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.title)+'</a></h3>'
+      +       '<span class="badge badge-'+esc(m.status)+'">'+esc(t(m.status))+'</span>'
+      +     '</div>'
+      +     '<div class="card-meta">'
+      +       avatarHtml
+      +       '<a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a>'
+      +       '<span class="dot">•</span>'
+      +       '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
+      +     '</div>'
+      +     tagHtml
+      +   '</div>'
       + '</div>'
-      + '<div class="card-meta">'
-      +   '<span>'+esc(t("creator"))+': <a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a></span>'
-      +   '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
-      + '</div>'
-      + '<p class="card-desc">'+esc(desc)+'</p>'
-      + tagHtml
       + '<div class="lists">'
       +   '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
       +   '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
