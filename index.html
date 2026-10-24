@@ -19,136 +19,30 @@
           <div class="brand-mark">R</div>
           <div>
             <div class="brand-title">Rivals Hub</div>
-            <div class="brand-subtitle" data-i18n="brandSubtitle">Catalog & status tracker</div>
+            <div class="brand-subtitle">Catalog & status tracker</div>
           </div>
-        </div>
-
-        <nav class="nav-links" aria-label="Main navigation">
-          <a href="#catalog" data-i18n="navCatalog">Catalog</a>
-          <a href="#submit" data-i18n="navSubmit">Submit</a>
-          <a href="#about" data-i18n="navAbout">About</a>
-        </nav>
-
-        <div class="lang-switcher" aria-label="Language switcher">
-          <button class="lang-btn active" data-lang="uk" type="button">UA</button>
-          <button class="lang-btn" data-lang="ru" type="button">RU</button>
-          <button class="lang-btn" data-lang="en" type="button">EN</button>
         </div>
       </div>
     </header>
 
     <main class="container">
-      <section class="hero">
-        <div class="hero-copy">
-          <span class="eyebrow" data-i18n="heroBadge">Roblox community database</span>
-          <h1 data-i18n="heroTitle">Track what works, what is broken, and what is worth checking.</h1>
-          <p data-i18n="heroText">
-            A simple hub for Rivals-related projects, builds, and community links with live status checks,
-            notes, and quick summaries.
-          </p>
-
-          <div class="hero-actions">
-            <a class="button primary" href="#catalog" data-i18n="browseCatalog">Browse catalog</a>
-            <a class="button secondary" href="#submit" data-i18n="addEntryBtn">Add entry</a>
-          </div>
-        </div>
-
-        <div class="hero-panel">
-          <div class="panel-row">
-            <span class="panel-label" data-i18n="statProjects">Projects</span>
-            <strong id="stat-projects">0</strong>
-          </div>
-          <div class="panel-row">
-            <span class="panel-label" data-i18n="statWorking">Working</span>
-            <strong id="stat-working">0</strong>
-          </div>
-          <div class="panel-row">
-            <span class="panel-label" data-i18n="statReview">Under review</span>
-            <strong id="stat-review">0</strong>
-          </div>
-          <div class="panel-row">
-            <span class="panel-label" data-i18n="statArchived">Archived</span>
-            <strong id="stat-archived">0</strong>
-          </div>
-        </div>
-      </section>
-
-      <section id="catalog" class="toolbar">
-        <div class="filters" style="width: 100%; max-width: 320px;">
+      <section class="toolbar">
+        <div class="filters">
           <label>
-            <span data-i18n="statusLabel">Status</span>
-            <select id="statusFilter" aria-label="Status filter"></select>
+            <span>Status</span>
+            <select id="statusFilter" aria-label="Status filter">
+              <option value="all">All</option>
+              <option value="works_but_abandoned">Works, but abandoned</option>
+              <option value="works">Works</option>
+              <option value="under_review">Under review</option>
+              <option value="broken">Broken</option>
+              <option value="archived">Archived</option>
+            </select>
           </label>
         </div>
       </section>
 
       <section id="modList" class="mod-list" aria-live="polite"></section>
-
-      <section id="submit" class="submit-card">
-        <div class="section-heading">
-          <span class="eyebrow" data-i18n="submitEyebrow">Submit</span>
-          <h2 data-i18n="submitHeading">Add new project</h2>
-        </div>
-
-        <form id="modForm" class="mod-form">
-          <div class="field-grid">
-            <label>
-              <span data-i18n="fieldTitle">Project title</span>
-              <input type="text" name="title" data-i18n-placeholder="fieldTitlePlaceholder" placeholder="e.g. Josh's RIVALS MODDED" required />
-            </label>
-
-            <label>
-              <span data-i18n="fieldCreator">Creator</span>
-              <input type="text" name="creator" data-i18n-placeholder="fieldCreatorPlaceholder" placeholder="Creator name" required />
-            </label>
-
-            <label>
-              <span data-i18n="fieldPlaceUrl">Place URL</span>
-              <input type="url" name="placeUrl" data-i18n-placeholder="fieldPlaceUrlPlaceholder" placeholder="https://..." required />
-            </label>
-
-            <label>
-              <span data-i18n="fieldStatus">Status</span>
-              <select name="status" required>
-                <option value="works" data-i18n="statusWorks">Works</option>
-                <option value="works_but_abandoned" data-i18n="statusWorksAbandoned">Works, but abandoned</option>
-                <option value="under_review" data-i18n="statusUnderReview">Under review</option>
-                <option value="broken" data-i18n="statusBroken">Broken</option>
-                <option value="archived" data-i18n="statusArchived">Archived</option>
-              </select>
-            </label>
-
-            <label class="full-width">
-              <span data-i18n="fieldDescription">Description</span>
-              <textarea name="description" rows="4" data-i18n-placeholder="fieldDescriptionPlaceholder" placeholder="What is this build/project?" required></textarea>
-            </label>
-
-            <label class="full-width">
-              <span data-i18n="fieldPros">Pros</span>
-              <textarea name="pros" rows="3" data-i18n-placeholder="fieldProsPlaceholder" placeholder="One per line"></textarea>
-            </label>
-
-            <label class="full-width">
-              <span data-i18n="fieldCons">Cons</span>
-              <textarea name="cons" rows="3" data-i18n-placeholder="fieldConsPlaceholder" placeholder="One per line"></textarea>
-            </label>
-          </div>
-
-          <button type="submit" class="button primary submit-btn" data-i18n="submitButton">Add entry</button>
-        </form>
-      </section>
-
-      <section id="about" class="about-card">
-        <div class="section-heading">
-          <span class="eyebrow" data-i18n="aboutEyebrow">About</span>
-          <h2 data-i18n="aboutHeading">Why this exists</h2>
-        </div>
-
-        <p data-i18n="aboutText">
-          This project is a lightweight catalog for Rivals-related community builds and project links. It focuses on
-          clarity: what is working, what is abandoned, what has issues, and where to find it.
-        </p>
-      </section>
     </main>
 
     <script src="script.js"></script>
