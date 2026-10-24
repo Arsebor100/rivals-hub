@@ -104,10 +104,22 @@ const mods = [
     creator: "Ixspan7039",
     creatorUrl: "https://www.roblox.com/users/10797552845/profile",
     checked: "2026-10-24",
-    description: "Одна з версій моддед RIVALS з моддед-шопом. Запускається без проблем, але давно не оновлювався.",
-    pros: ["Запускається без проблем","Є моддед-шоп","Стандартні звуки ходьби, стрибків і кліків з оригіналу"],
-    cons: ["Стара версія моду","Повністю платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кейс-скіни, арч-скіни, кристал-скіни, секретні предмети"],
-    tags: ["modded","rivals","roblox","abandoned","shop"]
+    tags: ["modded","rivals","roblox","abandoned","shop"],
+    description: {
+      uk: "Одна з версій моддед RIVALS з моддед-шопом. Запускається без проблем, але давно не оновлювався.",
+      ru: "Одна из версий моддед RIVALS с моддед-шопом. Запускается без проблем, но давно не обновлялся.",
+      en: "One of the modded RIVALS builds with a modded shop. Launches without issues, but hasn't been updated in a long time."
+    },
+    pros: {
+      uk: ["Запускається без проблем","Є моддед-шоп","Стандартні звуки ходьби, стрибків і кліків з оригіналу"],
+      ru: ["Запускается без проблем","Есть моддед-шоп","Стандартные звуки ходьбы, прыжков и кликов из оригинала"],
+      en: ["Launches without issues","Has a modded shop","Original walking, jumping and UI click sounds"]
+    },
+    cons: {
+      uk: ["Стара версія моду","Повністю платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кейс-скіни, арч-скіни, кристал-скіни, секретні предмети"],
+      ru: ["Старая версия мода","Полностью платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кейс-скины, арч-скины, кристалл-скины, секретные предметы"],
+      en: ["Old mod version","Admin panel is fully paid","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, case skins, arch skins, crystal skins, secret items"]
+    }
   }
 ];
 
@@ -121,6 +133,7 @@ const langButtons = document.querySelectorAll(".lang-btn");
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
 function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
+function pick(obj){ if(!obj) return ""; return obj[currentLang] || obj.uk || ""; }
 
 function rebuildStatusFilter(){
   const prev = statusFilter.value || "all";
@@ -136,8 +149,11 @@ function renderMods(){
     return;
   }
   modList.innerHTML = visible.map(m => {
-    const pros = m.pros.map(p => '<li>'+esc(p)+'</li>').join("");
-    const cons = m.cons.map(c => '<li>'+esc(c)+'</li>').join("");
+    const prosArr = pick(m.pros);
+    const consArr = pick(m.cons);
+    const desc = pick(m.description);
+    const pros = (Array.isArray(prosArr) ? prosArr : []).map(p => '<li>'+esc(p)+'</li>').join("");
+    const cons = (Array.isArray(consArr) ? consArr : []).map(c => '<li>'+esc(c)+'</li>').join("");
     const tags = (m.tags||[]).map(tag => '<span class="tag">'+esc(tag)+'</span>').join("");
     return '<article class="card">'
       + '<div class="card-head">'
@@ -148,7 +164,7 @@ function renderMods(){
       +   '<span>'+esc(t("creator"))+': <a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a></span>'
       +   '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
       + '</div>'
-      + '<p class="card-desc">'+esc(m.description)+'</p>'
+      + '<p class="card-desc">'+esc(desc)+'</p>'
       + '<div class="tags">'+tags+'</div>'
       + '<div class="lists">'
       +   '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
