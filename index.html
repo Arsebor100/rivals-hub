@@ -1,49 +1,45 @@
 <!DOCTYPE html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rivals Hub</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rivals Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
 
-    <header class="topbar">
-      <div class="container nav">
-        <div class="brand">
-          <div class="brand-mark">R</div>
-          <div>
-            <div class="brand-title">Rivals Hub</div>
-            <div class="brand-subtitle">Catalog & status tracker</div>
-          </div>
-        </div>
-
-        <div class="lang-switcher" aria-label="Language switcher">
-          <button class="lang-btn active" data-lang="uk" type="button">UA</button>
-          <button class="lang-btn" data-lang="ru" type="button">RU</button>
-          <button class="lang-btn" data-lang="en" type="button">EN</button>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div>
+          <div class="brand-title">Rivals Hub</div>
+          <div class="brand-subtitle" id="brandSubtitle">Каталог і статус проєктів</div>
         </div>
       </div>
-    </header>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="uk" type="button">UA</button>
+        <button class="lang-btn" data-lang="ru" type="button">RU</button>
+        <button class="lang-btn" data-lang="en" type="button">EN</button>
+      </div>
+    </div>
+  </header>
 
-    <main class="container">
-      <section class="toolbar">
-        <div class="filters">
-          <label>
-            <span id="statusLabel">Status</span>
-            <select id="statusFilter" aria-label="Status filter"></select>
-          </label>
-        </div>
-      </section>
+  <main class="container">
+    <section class="toolbar">
+      <label class="filter">
+        <span id="statusLabel">Статус</span>
+        <select id="statusFilter"></select>
+      </label>
+    </section>
+    <section id="modList" class="mod-list"></section>
+  </main>
 
-      <section id="modList" class="mod-list" aria-live="polite"></section>
-    </main>
-
-    <script src="script.js"></script>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
