@@ -25,7 +25,10 @@
      відвідуваннями.
   6. НЕ додавай поле "опис" назад у картку — воно навмисно
      видалено.
-  7. НЕ роби "я так бачу красивіше". Роби лише те, що
+  7. Блок "Плюси" ховається автоматично, якщо масив pros
+     порожній для поточної мови. "Мінуси" тоді на всю ширину.
+     Це зроблено навмисно — не "виправляти".
+  8. НЕ роби "я так бачу красивіше". Роби лише те, що
      просять. Незрозуміло — спитай, не додумуй.
 
   СТАТУСИ (тільки ці три):
@@ -42,14 +45,13 @@
       image          — посилання на логотип гри (rbxcdn)
       creatorAvatar  — посилання на аватар автора (rbxcdn headshot)
       pros {uk,ru,en}, cons {uk,ru,en}
-    Усі три мови в pros/cons обов'язкові.
+    pros може бути порожнім масивом [] — тоді блок не показується.
+    cons обов'язково має бути непорожнім.
 
   ЯК ДОДАТИ МОВУ (наприклад, PL):
     У translations додай `pl: { ... }` з усіма полями,
     у .lang-switcher додай кнопку data-lang="pl",
     у кожен mod додай `pl` у pros/cons.
-    (localStorage підхопить нове значення автоматично —
-    перевірка йде по ключах translations.)
 
   КОНТАКТ / ПРИЙОМ ЗАЯВОК:
     Кнопка #suggestBtn — <a href="mailto:arsebor100@gmail.com?...">.
@@ -110,6 +112,7 @@ button,select{font:inherit}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
 .badge-deleted{background:rgba(100,116,139,.12);color:#cbd5e1;border:1px solid rgba(100,116,139,.3)}
 .lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.lists.single{grid-template-columns:1fr}
 .list-box{padding:16px;border-radius:16px;border:1px solid rgba(148,163,184,.12);background:rgba(148,163,184,.03)}
 .list-box h4{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
 .list-box ul{margin:0;padding-left:18px;color:var(--soft)}
@@ -165,6 +168,7 @@ const statusOrder = ["all","works","broken","deleted"];
 // ── СПИСОК МОДІВ ─────────────────────────────────────────────
 // status: "works" | "broken" | "deleted"
 // checked: формат ДД.ММ.РРРР (наприклад, 24.10.2026)
+// pros може бути порожнім [] — тоді блок не показується
 const mods = [
   {
     id: "josh-rivals-modded",
@@ -178,9 +182,9 @@ const mods = [
     image: "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
     creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
     pros: {
-      uk: ["Стандартні звуки ходьби, стрибків і звук натискання GUI з оригіналу Rivals"],
-      ru: ["Стандартные звуки ходьбы, прыжков и звук нажатия GUI из оригинала Rivals"],
-      en: ["Original walking, jumping sounds and GUI click sound from Rivals"]
+      uk: [],
+      ru: [],
+      en: []
     },
     cons: {
       uk: ["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
@@ -212,7 +216,7 @@ const langButtons = document.querySelectorAll(".lang-btn");
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
 function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
-function pick(obj){ if(!obj) return ""; return obj[currentLang] || obj.uk || ""; }
+function pick(obj){ if(!obj) return []; return obj[currentLang] || obj.uk || []; }
 
 function saveLang(lang){
   try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
@@ -232,13 +236,22 @@ function renderMods(){
     return;
   }
   modList.innerHTML = visible.map(m => {
-    const prosArr = pick(m.pros);
-    const consArr = pick(m.cons);
-    const pros = (Array.isArray(prosArr) ? prosArr : []).map(p => '<li>'+esc(p)+'</li>').join("");
-    const cons = (Array.isArray(consArr) ? consArr : []).map(c => '<li>'+esc(c)+'</li>').join("");
+    const prosArr = Array.isArray(pick(m.pros)) ? pick(m.pros) : [];
+    const consArr = Array.isArray(pick(m.cons)) ? pick(m.cons) : [];
+    const pros = prosArr.map(p => '<li>'+esc(p)+'</li>').join("");
+    const cons = consArr.map(c => '<li>'+esc(c)+'</li>').join("");
     const tagHtml = m.tag ? '<span class="tag">'+esc(m.tag)+'</span>' : "";
     const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
     const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
+
+    const prosBox = prosArr.length
+      ? '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
+      : '';
+    const consBox = consArr.length
+      ? '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
+      : '';
+    const listsClass = (prosArr.length && consArr.length) ? 'lists' : 'lists single';
+
     return '<article class="card">'
       + '<div class="card-head">'
       +   thumbHtml
@@ -256,9 +269,9 @@ function renderMods(){
       +     tagHtml
       +   '</div>'
       + '</div>'
-      + '<div class="lists">'
-      +   '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
-      +   '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
+      + '<div class="'+listsClass+'">'
+      +   prosBox
+      +   consBox
       + '</div>'
       + '</article>';
   }).join("");
