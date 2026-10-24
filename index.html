@@ -20,9 +20,12 @@
   4. НЕ видаляй мультиязычність (uk/ru/en), кнопки UA/RU/EN,
      фільтр статусів, кнопку "Запропонувати", тег, логотип гри,
      аватар автора.
-  5. НЕ додавай поле "опис" назад у картку — воно навмисно
+  5. НЕ видаляй збереження мови в localStorage (ключ
+     "rivalsHubLang"). Обрана мова має зберігатися між
+     відвідуваннями.
+  6. НЕ додавай поле "опис" назад у картку — воно навмисно
      видалено.
-  6. НЕ роби "я так бачу красивіше". Роби лише те, що
+  7. НЕ роби "я так бачу красивіше". Роби лише те, що
      просять. Незрозуміло — спитай, не додумуй.
 
   СТАТУСИ (тільки ці три):
@@ -45,6 +48,8 @@
     У translations додай `pl: { ... }` з усіма полями,
     у .lang-switcher додай кнопку data-lang="pl",
     у кожен mod додай `pl` у pros/cons.
+    (localStorage підхопить нове значення автоматично —
+    перевірка йде по ключах translations.)
 
   КОНТАКТ / ПРИЙОМ ЗАЯВОК:
     Кнопка #suggestBtn — <a href="mailto:arsebor100@gmail.com?...">.
@@ -186,7 +191,17 @@ const mods = [
 ];
 // ─────────────────────────────────────────────────────────────
 
-let currentLang = "uk";
+const LANG_KEY = "rivalsHubLang";
+
+function loadSavedLang(){
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && translations[saved]) return saved;
+  } catch(e) {}
+  return "uk";
+}
+
+let currentLang = loadSavedLang();
 
 const brandSubtitle = document.getElementById("brandSubtitle");
 const statusLabel = document.getElementById("statusLabel");
@@ -198,6 +213,10 @@ const langButtons = document.querySelectorAll(".lang-btn");
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
 function t(k){return (translations[currentLang] && translations[currentLang][k]) || k}
 function pick(obj){ if(!obj) return ""; return obj[currentLang] || obj.uk || ""; }
+
+function saveLang(lang){
+  try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
+}
 
 function rebuildStatusFilter(){
   const prev = statusFilter.value || "all";
@@ -249,6 +268,7 @@ function applyLang(){
   brandSubtitle.textContent = t("subtitle");
   statusLabel.textContent = t("status");
   suggestLabel.textContent = t("suggest");
+  document.documentElement.lang = currentLang;
   rebuildStatusFilter();
   langButtons.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
   renderMods();
@@ -257,6 +277,7 @@ function applyLang(){
 langButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     currentLang = btn.dataset.lang;
+    saveLang(currentLang);
     applyLang();
   });
 });
