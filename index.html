@@ -19,49 +19,55 @@
           <div class="brand-mark">R</div>
           <div>
             <div class="brand-title">Rivals Hub</div>
-            <div class="brand-subtitle">Catalog & status tracker</div>
+            <div class="brand-subtitle" data-i18n="brandSubtitle">Catalog & status tracker</div>
           </div>
         </div>
 
         <nav class="nav-links" aria-label="Main navigation">
-          <a href="#catalog">Catalog</a>
-          <a href="#submit">Submit</a>
-          <a href="#about">About</a>
+          <a href="#catalog" data-i18n="navCatalog">Catalog</a>
+          <a href="#submit" data-i18n="navSubmit">Submit</a>
+          <a href="#about" data-i18n="navAbout">About</a>
         </nav>
+
+        <div class="lang-switcher" aria-label="Language switcher">
+          <button class="lang-btn active" data-lang="uk" type="button">UA</button>
+          <button class="lang-btn" data-lang="ru" type="button">RU</button>
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+        </div>
       </div>
     </header>
 
     <main class="container">
       <section class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Roblox community database</span>
-          <h1>Track what works, what is broken, and what is worth checking.</h1>
-          <p>
+          <span class="eyebrow" data-i18n="heroBadge">Roblox community database</span>
+          <h1 data-i18n="heroTitle">Track what works, what is broken, and what is worth checking.</h1>
+          <p data-i18n="heroText">
             A simple hub for Rivals-related projects, builds, and community links with live status checks,
             notes, and quick summaries.
           </p>
 
           <div class="hero-actions">
-            <a class="button primary" href="#catalog">Browse catalog</a>
-            <a class="button secondary" href="#submit">Add entry</a>
+            <a class="button primary" href="#catalog" data-i18n="browseCatalog">Browse catalog</a>
+            <a class="button secondary" href="#submit" data-i18n="addEntryBtn">Add entry</a>
           </div>
         </div>
 
         <div class="hero-panel">
           <div class="panel-row">
-            <span class="panel-label">Projects</span>
+            <span class="panel-label" data-i18n="statProjects">Projects</span>
             <strong id="stat-projects">0</strong>
           </div>
           <div class="panel-row">
-            <span class="panel-label">Working</span>
+            <span class="panel-label" data-i18n="statWorking">Working</span>
             <strong id="stat-working">0</strong>
           </div>
           <div class="panel-row">
-            <span class="panel-label">Under review</span>
+            <span class="panel-label" data-i18n="statReview">Under review</span>
             <strong id="stat-review">0</strong>
           </div>
           <div class="panel-row">
-            <span class="panel-label">Archived</span>
+            <span class="panel-label" data-i18n="statArchived">Archived</span>
             <strong id="stat-archived">0</strong>
           </div>
         </div>
@@ -70,20 +76,13 @@
       <section id="catalog" class="toolbar">
         <div class="search-box">
           <label for="searchInput" class="sr-only">Search</label>
-          <input id="searchInput" type="search" placeholder="Search by title, creator, tag..." />
+          <input id="searchInput" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="Search by title, creator, tag..." />
         </div>
 
         <div class="filters">
           <label>
-            <span>Status</span>
-            <select id="statusFilter">
-              <option value="all">All</option>
-              <option value="works">Works</option>
-              <option value="works_but_abandoned">Works, but abandoned</option>
-              <option value="under_review">Under review</option>
-              <option value="broken">Broken</option>
-              <option value="archived">Archived</option>
-            </select>
+            <span data-i18n="statusLabel">Status</span>
+            <select id="statusFilter" aria-label="Status filter"></select>
           </label>
         </div>
       </section>
@@ -92,65 +91,65 @@
 
       <section id="submit" class="submit-card">
         <div class="section-heading">
-          <span class="eyebrow">Submit</span>
-          <h2>Add new project</h2>
+          <span class="eyebrow" data-i18n="submitEyebrow">Submit</span>
+          <h2 data-i18n="submitHeading">Add new project</h2>
         </div>
 
         <form id="modForm" class="mod-form">
           <div class="field-grid">
             <label>
-              <span>Project title</span>
-              <input type="text" name="title" placeholder="e.g. Josh's RIVALS MODDED" required />
+              <span data-i18n="fieldTitle">Project title</span>
+              <input type="text" name="title" data-i18n-placeholder="fieldTitlePlaceholder" placeholder="e.g. Josh's RIVALS MODDED" required />
             </label>
 
             <label>
-              <span>Creator</span>
-              <input type="text" name="creator" placeholder="Creator name" required />
+              <span data-i18n="fieldCreator">Creator</span>
+              <input type="text" name="creator" data-i18n-placeholder="fieldCreatorPlaceholder" placeholder="Creator name" required />
             </label>
 
             <label>
-              <span>Place URL</span>
-              <input type="url" name="placeUrl" placeholder="https://..." required />
+              <span data-i18n="fieldPlaceUrl">Place URL</span>
+              <input type="url" name="placeUrl" data-i18n-placeholder="fieldPlaceUrlPlaceholder" placeholder="https://..." required />
             </label>
 
             <label>
-              <span>Status</span>
+              <span data-i18n="fieldStatus">Status</span>
               <select name="status" required>
-                <option value="works">Works</option>
-                <option value="works_but_abandoned">Works, but abandoned</option>
-                <option value="under_review">Under review</option>
-                <option value="broken">Broken</option>
-                <option value="archived">Archived</option>
+                <option value="works" data-i18n="statusWorks">Works</option>
+                <option value="works_but_abandoned" data-i18n="statusWorksAbandoned">Works, but abandoned</option>
+                <option value="under_review" data-i18n="statusUnderReview">Under review</option>
+                <option value="broken" data-i18n="statusBroken">Broken</option>
+                <option value="archived" data-i18n="statusArchived">Archived</option>
               </select>
             </label>
 
             <label class="full-width">
-              <span>Description</span>
-              <textarea name="description" rows="4" placeholder="What is this build/project?" required></textarea>
+              <span data-i18n="fieldDescription">Description</span>
+              <textarea name="description" rows="4" data-i18n-placeholder="fieldDescriptionPlaceholder" placeholder="What is this build/project?" required></textarea>
             </label>
 
             <label class="full-width">
-              <span>Pros</span>
-              <textarea name="pros" rows="3" placeholder="One per line"></textarea>
+              <span data-i18n="fieldPros">Pros</span>
+              <textarea name="pros" rows="3" data-i18n-placeholder="fieldProsPlaceholder" placeholder="One per line"></textarea>
             </label>
 
             <label class="full-width">
-              <span>Cons</span>
-              <textarea name="cons" rows="3" placeholder="One per line"></textarea>
+              <span data-i18n="fieldCons">Cons</span>
+              <textarea name="cons" rows="3" data-i18n-placeholder="fieldConsPlaceholder" placeholder="One per line"></textarea>
             </label>
           </div>
 
-          <button type="submit" class="button primary submit-btn">Add entry</button>
+          <button type="submit" class="button primary submit-btn" data-i18n="submitButton">Add entry</button>
         </form>
       </section>
 
       <section id="about" class="about-card">
         <div class="section-heading">
-          <span class="eyebrow">About</span>
-          <h2>Why this exists</h2>
+          <span class="eyebrow" data-i18n="aboutEyebrow">About</span>
+          <h2 data-i18n="aboutHeading">Why this exists</h2>
         </div>
 
-        <p>
+        <p data-i18n="aboutText">
           This project is a lightweight catalog for Rivals-related community builds and project links. It focuses on
           clarity: what is working, what is abandoned, what has issues, and where to find it.
         </p>
