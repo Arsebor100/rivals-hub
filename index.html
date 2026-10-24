@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rivals Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">
+          <div class="brand-mark">R</div>
+          <div>
+            <div class="brand-title">Rivals Hub</div>
+            <div class="brand-subtitle">Catalog & status tracker</div>
+          </div>
+        </div>
+
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#catalog">Catalog</a>
+          <a href="#submit">Submit</a>
+          <a href="#about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Roblox community database</span>
+          <h1>Track what works, what is broken, and what is worth checking.</h1>
+          <p>
+            A simple hub for Rivals-related projects, builds, and community links with live status checks,
+            notes, and quick summaries.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button primary" href="#catalog">Browse catalog</a>
+            <a class="button secondary" href="#submit">Add entry</a>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="panel-row">
+            <span class="panel-label">Projects</span>
+            <strong id="stat-projects">0</strong>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">Working</span>
+            <strong id="stat-working">0</strong>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">Under review</span>
+            <strong id="stat-review">0</strong>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">Archived</span>
+            <strong id="stat-archived">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="catalog" class="toolbar">
+        <div class="search-box">
+          <label for="searchInput" class="sr-only">Search</label>
+          <input id="searchInput" type="search" placeholder="Search by title, creator, tag..." />
+        </div>
+
+        <div class="filters">
+          <label>
+            <span>Status</span>
+            <select id="statusFilter">
+              <option value="all">All</option>
+              <option value="works">Works</option>
+              <option value="works_but_abandoned">Works, but abandoned</option>
+              <option value="under_review">Under review</option>
+              <option value="broken">Broken</option>
+              <option value="archived">Archived</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section id="modList" class="mod-list" aria-live="polite"></section>
+
+      <section id="submit" class="submit-card">
+        <div class="section-heading">
+          <span class="eyebrow">Submit</span>
+          <h2>Add new project</h2>
+        </div>
+
+        <form id="modForm" class="mod-form">
+          <div class="field-grid">
+            <label>
+              <span>Project title</span>
+              <input type="text" name="title" placeholder="e.g. Josh's RIVALS MODDED" required />
+            </label>
+
+            <label>
+              <span>Creator</span>
+              <input type="text" name="creator" placeholder="Creator name" required />
+            </label>
+
+            <label>
+              <span>Place URL</span>
+              <input type="url" name="placeUrl" placeholder="https://..." required />
+            </label>
+
+            <label>
+              <span>Status</span>
+              <select name="status" required>
+                <option value="works">Works</option>
+                <option value="works_but_abandoned">Works, but abandoned</option>
+                <option value="under_review">Under review</option>
+                <option value="broken">Broken</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+
+            <label class="full-width">
+              <span>Description</span>
+              <textarea name="description" rows="4" placeholder="What is this build/project?" required></textarea>
+            </label>
+
+            <label class="full-width">
+              <span>Pros</span>
+              <textarea name="pros" rows="3" placeholder="One per line"></textarea>
+            </label>
+
+            <label class="full-width">
+              <span>Cons</span>
+              <textarea name="cons" rows="3" placeholder="One per line"></textarea>
+            </label>
+          </div>
+
+          <button type="submit" class="button primary submit-btn">Add entry</button>
+        </form>
+      </section>
+
+      <section id="about" class="about-card">
+        <div class="section-heading">
+          <span class="eyebrow">About</span>
+          <h2>Why this exists</h2>
+        </div>
+
+        <p>
+          This project is a lightweight catalog for Rivals-related community builds and project links. It focuses on
+          clarity: what is working, what is abandoned, what has issues, and where to find it.
+        </p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
