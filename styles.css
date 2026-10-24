@@ -67,6 +67,7 @@ button, select { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   padding: 18px 0;
 }
 
@@ -95,6 +96,36 @@ button, select { font: inherit; }
 .brand-subtitle {
   color: var(--text-soft);
   font-size: 0.78rem;
+}
+
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.lang-btn {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.7);
+  color: var(--text-soft);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: var(--text);
+  border-color: rgba(196, 181, 253, 0.35);
+}
+
+.lang-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  border-color: transparent;
 }
 
 .toolbar {
@@ -260,6 +291,7 @@ button, select { font: inherit; }
 }
 
 @media (max-width: 720px) {
+  .nav { flex-wrap: wrap; }
   .data-grid { grid-template-columns: 1fr; }
   .card-head {
     flex-direction: column;

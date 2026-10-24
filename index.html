@@ -22,6 +22,12 @@
             <div class="brand-subtitle">Catalog & status tracker</div>
           </div>
         </div>
+
+        <div class="lang-switcher" aria-label="Language switcher">
+          <button class="lang-btn active" data-lang="uk" type="button">UA</button>
+          <button class="lang-btn" data-lang="ru" type="button">RU</button>
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+        </div>
       </div>
     </header>
 
@@ -29,15 +35,8 @@
       <section class="toolbar">
         <div class="filters">
           <label>
-            <span>Status</span>
-            <select id="statusFilter" aria-label="Status filter">
-              <option value="all">All</option>
-              <option value="works_but_abandoned">Works, but abandoned</option>
-              <option value="works">Works</option>
-              <option value="under_review">Under review</option>
-              <option value="broken">Broken</option>
-              <option value="archived">Archived</option>
-            </select>
+            <span id="statusLabel">Status</span>
+            <select id="statusFilter" aria-label="Status filter"></select>
           </label>
         </div>
       </section>
