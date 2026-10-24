@@ -9,66 +9,41 @@
   Файл єдиний: index.html. Стилі та скрипт всередині.
 
   ЛОКАЛЬНІ АСЕТИ (в корені репо):
-    - Untitled6.png                                — лого Rivals (шапка)
-    - Images_Logo_N_512_13854780042.png            — половина N (лоадер)
-    - Images_Logo_G_512_13854780213.png            — половина G (лоадер)
+    - Untitled6.png                                — лого Rivals (шапка + GameLogo в лоадері)
+    - Images_Logo_N_512_13854780042.png            — буква N
+    - Images_Logo_G_512_13854780213.png            — буква G
     - Rubik-*.ttf                                  — шрифт Rubik
-    - 2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg — звук лоадера
+    - 2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg — звук інтро
     - click_sound_177266782.ogg                    — звук кліку
 
-  ЖОРСТКІ ПРАВИЛА:
-  1. НЕ переробляй дизайн під себе. Зберігай кольори, шрифти,
-     відступи, скруглення, поточний темний стиль.
-  2. НЕ додавай нові секції, кнопки, форми, фреймворки,
-     залежності, аналітику, cookie-банери — якщо користувач
-     ЯВНО не попросив.
-  3. НЕ винось стилі/скрипт в окремі файли.
-  4. НЕ видаляй: мультиязычність, кнопки UA/RU/EN, фільтр
-     статусів, кнопку "Запропонувати", теги, логотип гри,
-     аватар автора, групу, Discord, блок кодів, лоадер,
-     N/G анімацію, копіювання кодів по кліку.
-  5. НЕ видаляй збереження мови в localStorage ("rivalsHubLang").
-  6. НЕ додавай поле "опис" назад у картку — навмисно видалено.
-  7. Блок "Плюси" / "Мінуси" ховається, якщо масив порожній.
-  8. Блок "Коди" — окрема строка, НЕ в плюсах. Клік по ньому
-     копіює код у буфер обміну.
-  9. Теги — масив tags[], кожен тег окремим чипом.
- 10. НЕ роби "я так бачу красивіше". Роби лише те, що просять.
-
-  СТАТУСИ (тільки ці три):
-    "works" | "broken" | "deleted"
-  ФОРМАТ ДАТИ: ДД.ММ.РРРР
-
-  ЛОАДЕР (наближений до оригінального LoadingScreen з Rivals):
-    1. Фаза 0-200ms: нічого.
-    2. Фаза 200-1700ms: половини N та G спірально влітають
-       зліва/справа з обертанням (як у грі — формула через
-       sqrt(1 - (p-1)^2) * 540 + 180).
-    3. Фаза 1700-2500ms: літери заливаються яскравим кольором
-       знизу вгору (аналог White/Black fill з оригіналу;
-       LOGO_TOP=0.262, LOGO_BOTTOM=0.738).
-    4. Фаза 2500-3000ms: fade out.
-    Показується один раз за сесію (sessionStorage "rivalsHubLoaded").
+  ЛОАДЕР — послідовність (реконструйована з LoadingScreen.rbxmx):
+    1. 200ms пауза.
+    2. 200-1400ms: N зліва, G справа спірально з'їжджаються до центру,
+       обертаючись (формула з _SpiralAnimation: (sqrt(1-(p/100-1)^2)*540+180)%360).
+       Зупиняються поряд (N зліва, G справа, ЗАЗОР ~ -22%/+22%).
+    3. 1400-1700ms: тримаються.
+    4. 1700-2200ms: SplitLogo — роз'їжджаються (N вліво, G вправо, з обертанням).
+    5. 2000-2500ms: GameLogo (Untitled6.png) scale-in 0.3→1 з opacity.
+    6. 2500-3200ms: GameLogo тримається.
+    7. 3200-3700ms: fade out всього лоадера.
+    Показується один раз за сесію ("rivalsHubLoaded").
 
   ЗВУК:
-    - intro: грає при заході (autoplay спробуємо; якщо браузер
-      заблокує — на першому кліку/тапі).
-    - click: грає на кожен клік/тап по <a>, <button>, .codes-row.
+    - intro: пробує autoplay, при блокуванні — на першу взаємодію.
+    - click: на клік/тап по <a>, <button>, .codes-row.
 
   КОПІЮВАННЯ КОДУ:
-    - Клік по .codes-row копіює код (частину ДО " — " якщо є,
-      інакше весь рядок).
+    - Клік по .codes-row копіює частину ДО " — " (тільки код).
     - Показує "Скопійовано!" на 1.2с.
-    - Fallback через textarea+execCommand для старих браузерів.
 
-  ПОЛЯ МОДА:
-    id, title, status, placeUrl, creator, creatorUrl,
-    creatorAvatar, group, groupUrl, groupAvatar,
-    discordUrl, discordIcon, checked, tags[], codes, image,
-    pros {uk,ru,en}, cons {uk,ru,en}
+  ЖОРСТКІ ПРАВИЛА:
+  1-10 — ті ж самі. НЕ переробляй дизайн. НЕ додавай секції.
+  НЕ видаляй мультиязычність, статуси, копіювання, N/G, GameLogo.
+  НЕ додавай опис назад у картку.
 
-  КОНТАКТ / ПРИЙОМ ЗАЯВОК:
-    #suggestBtn — mailto:arsebor100@gmail.com.
+  СТАТУСИ: "works" | "broken" | "deleted"
+  ФОРМАТ ДАТИ: ДД.ММ.РРРР
+  КОНТАКТ: #suggestBtn — mailto:arsebor100@gmail.com
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -159,40 +134,43 @@ button,select{font:inherit}
 .list-box ul{margin:0;padding-left:18px;color:var(--soft)}
 .empty{padding:26px;border-radius:18px;text-align:center;color:var(--soft);background:rgba(148,163,184,.03);border:1px dashed rgba(148,163,184,.2)}
 
-/* ── LOADER з N/G анімацією ── */
-.loader{position:fixed;inset:0;z-index:9999;background:#05070d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:1;transition:opacity .5s ease;pointer-events:all}
-.loader.hide{opacity:0;pointer-events:none}
-.loader::before{content:"";position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle, rgba(124,58,237,.32), transparent 65%);filter:blur(50px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:loaderPulse 2.4s ease-in-out infinite}
+/* ── LOADER ── */
+.loader{position:fixed;inset:0;z-index:9999;background:#05070d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:1;transition:opacity .5s ease;pointer-events:all;overflow:hidden}
+.loader::before{content:"";position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle, rgba(124,58,237,.32), transparent 65%);filter:blur(50px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 
-.logo-spiral{
+.loader-stage{
   position:relative;
-  width:200px;height:200px;
+  width:220px;height:220px;
   display:grid;place-items:center;
 }
+
 .logo-half{
   position:absolute;inset:0;
-  display:grid;place-items:center;
   opacity:0;
   will-change:transform,opacity;
+  transform-origin:50% 50%;
 }
 .logo-half img{
-  position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:contain;
   pointer-events:none;
-}
-.logo-base{filter:brightness(.28) saturate(.15)}
-.logo-fill{
-  filter:brightness(1.35) saturate(1.15);
-  clip-path:inset(100% 0 0 0);
-  transition:clip-path .08s linear;
+  filter:drop-shadow(0 10px 30px rgba(124,58,237,.35));
 }
 
-.loader-bar{position:relative;width:220px;height:4px;border-radius:999px;background:rgba(148,163,184,.12);overflow:hidden}
-.loader-bar-fill{position:absolute;inset:0 auto 0 0;width:0%;background:linear-gradient(90deg,var(--violet),var(--violet-2));border-radius:999px;transition:width .15s linear}
-.loader-text{color:var(--soft);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+.game-logo{
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  opacity:0;
+  will-change:transform,opacity;
+  transform:scale(.3);
+  transform-origin:50% 50%;
+  filter:drop-shadow(0 20px 60px rgba(124,58,237,.6));
+  pointer-events:none;
+}
 
-@keyframes loaderPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
+.loader-text{color:var(--soft);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55;position:relative;z-index:1}
 
 @media (max-width:720px){
   .nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}
@@ -200,8 +178,7 @@ button,select{font:inherit}
   .suggest-btn{justify-content:center}
   .card-head{gap:12px}.thumb{width:64px;height:64px;border-radius:12px}
   .title-row{flex-direction:column;align-items:flex-start;gap:8px}
-  .logo-spiral{width:160px;height:160px}
-  .loader-bar{width:180px}
+  .loader-stage{width:170px;height:170px}
   .codes-hint{display:none}
 }
 </style>
@@ -209,17 +186,15 @@ button,select{font:inherit}
 <body>
 
 <div class="loader" id="loader">
-  <div class="logo-spiral" id="logoSpiral">
-    <div class="logo-half logo-N">
-      <img class="logo-base" src="./Images_Logo_N_512_13854780042.png" alt="" />
-      <img class="logo-fill" src="./Images_Logo_N_512_13854780042.png" alt="" />
+  <div class="loader-stage">
+    <div class="logo-half logo-N" id="logoN">
+      <img src="./Images_Logo_N_512_13854780042.png" alt="" />
     </div>
-    <div class="logo-half logo-G">
-      <img class="logo-base" src="./Images_Logo_G_512_13854780213.png" alt="" />
-      <img class="logo-fill" src="./Images_Logo_G_512_13854780213.png" alt="" />
+    <div class="logo-half logo-G" id="logoG">
+      <img src="./Images_Logo_G_512_13854780213.png" alt="" />
     </div>
+    <img class="game-logo" id="gameLogo" src="./Untitled6.png" alt="Rivals" />
   </div>
-  <div class="loader-bar"><div class="loader-bar-fill" id="loaderFill"></div></div>
   <div class="loader-text" id="loaderText">Loading…</div>
 </div>
 
@@ -342,7 +317,6 @@ const LOADER_KEY = "rivalsHubLoaded";
 const SOUND_INTRO_URL = "./2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg";
 const SOUND_CLICK_URL = "./click_sound_177266782.ogg";
 
-// Спробуємо autoplay зразу. Якщо браузер блокує — повторимо при першій взаємодії.
 const introAudio = new Audio(SOUND_INTRO_URL);
 introAudio.volume = 0.5;
 introAudio.preload = "auto";
@@ -370,7 +344,6 @@ function armIntroFallback() {
 }
 armIntroFallback();
 
-let clickAudioReady = false;
 function playClick() {
   try {
     const a = new Audio(SOUND_CLICK_URL);
@@ -439,11 +412,9 @@ function renderMods(){
 
     const pros = prosArr.map(p => '<li>'+esc(p)+'</li>').join("");
     const cons = consArr.map(c => '<li>'+esc(c)+'</li>').join("");
-
     const tagsHtml = tagsArr.length
       ? '<div class="tags-row">'+tagsArr.map(tg => '<span class="tag">'+esc(tg)+'</span>').join("")+'</div>'
       : '';
-
     const codesHtml = codesVal
       ? '<div class="codes-row" role="button" tabindex="0" data-copy="'+esc(codeCopy)+'">'
         + '<span class="codes-label">'+esc(t("codes"))+':</span>'
@@ -451,7 +422,6 @@ function renderMods(){
         + '<span class="codes-hint">'+esc(t("clickToCopy"))+'</span>'
         + '</div>'
       : '';
-
     const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
     const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
     const groupHtml = (m.group && m.groupUrl)
@@ -517,7 +487,7 @@ langButtons.forEach(btn => {
 });
 statusFilter.addEventListener("change", renderMods);
 
-// ── КОПІЮВАННЯ КОДУ ──────────────────────────────────────────
+// ── КОПІЮВАННЯ ──────────────────────────────────────────────
 async function copyText(text){
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -578,7 +548,7 @@ document.addEventListener("keydown", async (e) => {
   }
 });
 
-// ── LOADER з N/G АНІМАЦІЄЮ ──────────────────────────────────
+// ── LOADER (N/G → Split → GameLogo → Fade) ─────────────────
 (function runLoader(){
   const loader = document.getElementById("loader");
   if (!loader) return;
@@ -587,67 +557,108 @@ document.addEventListener("keydown", async (e) => {
   try { shown = sessionStorage.getItem(LOADER_KEY) === "1"; } catch(e){}
   if (shown) { loader.remove(); return; }
 
-  const N = loader.querySelector(".logo-N");
-  const G = loader.querySelector(".logo-G");
-  const nFill = N.querySelector(".logo-fill");
-  const gFill = G.querySelector(".logo-fill");
-  const barFill = document.getElementById("loaderFill");
+  const N = document.getElementById("logoN");
+  const G = document.getElementById("logoG");
+  const gameLogo = document.getElementById("gameLogo");
 
-  const SPIRAL_START = 200;
-  const SPIRAL_DUR   = 1500;
-  const FILL_DUR     = 800;
-  const FADE_START   = SPIRAL_START + SPIRAL_DUR + FILL_DUR;
+  const stageW = () => loader.querySelector(".loader-stage").clientWidth || 220;
+  const halfGap = () => stageW() * 0.22; // разсTOяние смещения N/G от центра
+  const farX    = () => stageW() * 2.2;  // стартовое расстояние от центра
+
+  // Таймлайн
+  const T_PAUSE       = 200;
+  const T_SPIRAL_DUR  = 1200;
+  const T_HOLD        = 300;
+  const T_SPLIT_DUR   = 500;
+  const T_LOGO_OVERLAP = 200; // GameLogo стартует за 200мс до конца SplitLogo
+  const T_LOGO_DUR    = 500;
+  const T_LOGO_HOLD   = 600;
+  const T_FADE_DUR    = 500;
+
+  const T_SPIRAL_START = T_PAUSE;
+  const T_SPIRAL_END   = T_SPIRAL_START + T_SPIRAL_DUR;          // 1400
+  const T_SPLIT_START  = T_SPIRAL_END + T_HOLD;                   // 1700
+  const T_SPLIT_END    = T_SPLIT_START + T_SPLIT_DUR;             // 2200
+  const T_LOGO_START   = T_SPLIT_END - T_LOGO_OVERLAP;            // 2000
+  const T_LOGO_IN_END  = T_LOGO_START + T_LOGO_DUR;               // 2500
+  const T_FADE_START   = T_LOGO_IN_END + T_LOGO_HOLD;             // 3100
+  const T_END          = T_FADE_START + T_FADE_DUR;               // 3600
 
   const start = performance.now();
   let done = false;
 
   function frame(now){
     if (done) return;
-    const elapsed = now - start;
+    const e = now - start;
+    const gap = halfGap();
+    const far = farX();
 
-    // ── Фаза спіралі ──
-    if (elapsed < SPIRAL_START) {
-      // ще нічого
-    } else if (elapsed < SPIRAL_START + SPIRAL_DUR) {
-      const t01 = (elapsed - SPIRAL_START) / SPIRAL_DUR;
-      const ease = 1 - Math.pow(1 - t01, 5); // ~ Out Quint
+    if (e < T_SPIRAL_START) {
+      N.style.opacity = 0;
+      G.style.opacity = 0;
+    } else if (e < T_SPIRAL_END) {
+      const t01 = (e - T_SPIRAL_START) / T_SPIRAL_DUR;
+      // Out Quint для позиции
+      const ease = 1 - Math.pow(1 - t01, 5);
+      const nX = -far + (gap + far) * ease;  // -far → -gap
+      const gX =  far - (gap + far) * ease;  //  far →  gap
 
-      const nX = -320 * (1 - ease);
-      const gX =  320 * (1 - ease);
-
-      // Формула з оригіналу:
-      // v41 = (sqrt(1 - (p/100 - 1)^2) * 540 + 180) % 360
+      // Вращение по формуле з _SpiralAnimation
       const p = t01 * 100;
       const rad = Math.sqrt(Math.max(0, 1 - Math.pow(p/100 - 1, 2)));
       const angle = (rad * 540 + 180) % 360;
 
-      N.style.transform = "translateX(" + nX + "px) rotate(" + (-angle) + "deg)";
-      G.style.transform = "translateX(" + gX + "px) rotate(" + (-angle) + "deg)";
+      N.style.transform = 'translateX(' + nX + 'px) rotate(' + (-angle) + 'deg)';
+      G.style.transform = 'translateX(' + gX + 'px) rotate(' + (-angle) + 'deg)';
       N.style.opacity = Math.min(1, t01 * 2.5);
       G.style.opacity = Math.min(1, t01 * 2.5);
-    } else {
-      // ── Фаза заливки ──
-      N.style.transform = "translateX(0) rotate(0deg)";
-      G.style.transform = "translateX(0) rotate(0deg)";
+    } else if (e < T_SPLIT_START) {
+      N.style.transform = 'translateX(' + (-gap) + 'px) rotate(0deg)';
+      G.style.transform = 'translateX(' + gap + 'px) rotate(0deg)';
       N.style.opacity = 1;
       G.style.opacity = 1;
+    } else if (e < T_SPLIT_END) {
+      const t01 = (e - T_SPLIT_START) / T_SPLIT_DUR;
+      const ease = 1 - Math.pow(1 - t01, 3); // Out Cubic
+      const nX = -gap + (-far - (-gap)) * ease;
+      const gX =  gap + (far - gap) * ease;
+      const angle = ease * 360;
 
-      const ft = Math.min(1, (elapsed - SPIRAL_START - SPIRAL_DUR) / FILL_DUR);
-      // v76 = 0.738 - ft * (0.738 - 0.262) = 0.738 - ft * 0.476
-      const v76 = 0.738 - ft * 0.476;
-      const clipPct = v76 * 100;
-      nFill.style.clipPath = "inset(" + clipPct + "% 0 0 0)";
-      gFill.style.clipPath = "inset(" + clipPct + "% 0 0 0)";
-      barFill.style.width = (ft * 100) + "%";
+      N.style.transform = 'translateX(' + nX + 'px) rotate(' + (-angle) + 'deg)';
+      G.style.transform = 'translateX(' + gX + 'px) rotate(' + (-angle) + 'deg)';
+      N.style.opacity = 1 - ease * 0.8;
+      G.style.opacity = 1 - ease * 0.8;
+    } else {
+      N.style.opacity = 0;
+      G.style.opacity = 0;
     }
 
-    if (elapsed < FADE_START + 400) {
+    // GameLogo
+    if (e < T_LOGO_START) {
+      gameLogo.style.opacity = 0;
+      gameLogo.style.transform = 'scale(.3)';
+    } else if (e < T_LOGO_IN_END) {
+      const t01 = (e - T_LOGO_START) / T_LOGO_DUR;
+      const ease = 1 - Math.pow(1 - t01, 3);
+      gameLogo.style.opacity = ease;
+      gameLogo.style.transform = 'scale(' + (0.3 + 0.7 * ease) + ')';
+    } else {
+      gameLogo.style.opacity = 1;
+      gameLogo.style.transform = 'scale(1)';
+    }
+
+    // Fade out
+    if (e >= T_FADE_START) {
+      const t01 = Math.min(1, (e - T_FADE_START) / T_FADE_DUR);
+      loader.style.opacity = 1 - t01;
+    }
+
+    if (e < T_END) {
       requestAnimationFrame(frame);
     } else {
       done = true;
-      loader.classList.add("hide");
-      try { sessionStorage.setItem(LOADER_KEY, "1"); } catch(e){}
-      setTimeout(() => loader.remove(), 600);
+      try { sessionStorage.setItem(LOADER_KEY, "1"); } catch(err){}
+      loader.remove();
     }
   }
   requestAnimationFrame(frame);
