@@ -19,48 +19,47 @@
   3. НЕ винось стилі/скрипт в окремі файли.
   4. НЕ видаляй мультиязычність (uk/ru/en), кнопки UA/RU/EN,
      фільтр статусів, кнопку "Запропонувати", тег, логотип гри,
-     аватар автора.
+     аватар автора, групу, Discord.
   5. НЕ видаляй збереження мови в localStorage (ключ
-     "rivalsHubLang"). Обрана мова має зберігатися між
-     відвідуваннями.
+     "rivalsHubLang").
   6. НЕ додавай поле "опис" назад у картку — воно навмисно
      видалено.
-  7. Блок "Плюси" ховається автоматично, якщо масив pros
-     порожній для поточної мови. "Мінуси" тоді на всю ширину.
-     Це зроблено навмисно — не "виправляти".
+  7. Блок "Плюси" або "Мінуси" ховається, якщо масив порожній.
+     Другий блок тоді на всю ширину.
   8. НЕ роби "я так бачу красивіше". Роби лише те, що
      просять. Незрозуміло — спитай, не додумуй.
 
   СТАТУСИ (тільки ці три):
-    "works"    — Работает / Працює / Works
-    "broken"   — Не работает / Не працює / Broken
-    "deleted"  — Удалён / Видалений / Deleted
+    "works" | "broken" | "deleted"
 
   ФОРМАТ ДАТИ: ДД.ММ.РРРР (наприклад, 24.10.2026)
 
-  ЯК ДОДАТИ НОВИЙ МОД:
-    Скопіюй об'єкт у масиві `const mods = [...]` і заміни:
-      id, title, status, placeUrl, creator, creatorUrl,
-      checked ("ДД.ММ.РРРР"), tag (рядок, напр. "modded shop"),
-      image          — посилання на логотип гри (rbxcdn)
-      creatorAvatar  — посилання на аватар автора (rbxcdn headshot)
-      pros {uk,ru,en}, cons {uk,ru,en}
-    pros може бути порожнім масивом [] — тоді блок не показується.
-    cons обов'язково має бути непорожнім.
-
-  ЯК ДОДАТИ МОВУ (наприклад, PL):
-    У translations додай `pl: { ... }` з усіма полями,
-    у .lang-switcher додай кнопку data-lang="pl",
-    у кожен mod додай `pl` у pros/cons.
+  ПОЛЯ МОДА (усі — в одному об'єкті в const mods):
+    id              — унікальний рядок латиницею
+    title           — назва (не перекладається)
+    status          — "works" | "broken" | "deleted"
+    placeUrl        — пряме посилання на гру Roblox
+    creator         — нік (не перекладається)
+    creatorUrl      — профіль
+    creatorAvatar   — аватар автора (rbxcdn) — опційно
+    group           — назва групи — опційно
+    groupUrl        — посилання на групу — опційно
+    groupAvatar     — логотип групи — опційно
+    discordUrl      — посилання на Discord — опційно
+    discordIcon     — іконка Discord — опційно
+    checked         — "ДД.ММ.РРРР"
+    tag             — коротка строка або "", напр. "modded shop"
+    image           — логотип гри (rbxcdn) — опційно
+    pros {uk,ru,en} — масиви рядків, може бути []
+    cons {uk,ru,en} — масиви рядків, може бути []
 
   КОНТАКТ / ПРИЙОМ ЗАЯВОК:
-    Кнопка #suggestBtn — <a href="mailto:arsebor100@gmail.com?...">.
-    Змінити канал = змінити ТІЛЬКИ href у #suggestBtn і текст
-    translations.suggest.
+    #suggestBtn — mailto:arsebor100@gmail.com.
+    Змінити канал = змінити ТІЛЬКИ href і translations.suggest.
 
   У МАЙБУТНЬОМУ (не зараз, не роби без прохання):
-    - шрифт у стилі Rivals (заміна font-family у :root/body)
-    - звуки Rivals (Audio API, клік по кнопках/картках)
+    - шрифт у стилі Rivals
+    - звуки Rivals (Audio API)
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -103,8 +102,12 @@ button,select{font:inherit}
 .card-title a:hover{color:#c4b5fd}
 .card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--soft);font-size:.82rem;margin-bottom:10px}
 .avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;background:rgba(148,163,184,.1);border:1px solid var(--line)}
-.creator{color:#d8b4fe}
-.creator:hover{text-decoration:underline}
+.avatar.group{width:18px;height:18px;border-radius:6px}
+.creator,.group{color:#d8b4fe;display:inline-flex;align-items:center;gap:6px}
+.creator:hover,.group:hover{text-decoration:underline}
+.discord-link{display:inline-flex;align-items:center;justify-content:center;color:#d8b4fe;transition:transform .12s ease}
+.discord-link:hover{transform:scale(1.1)}
+.discord-icon{width:20px;height:20px;object-fit:contain;border-radius:6px}
 .dot{color:var(--soft);opacity:.6}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
 .badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
@@ -167,9 +170,36 @@ const statusOrder = ["all","works","broken","deleted"];
 
 // ── СПИСОК МОДІВ ─────────────────────────────────────────────
 // status: "works" | "broken" | "deleted"
-// checked: формат ДД.ММ.РРРР (наприклад, 24.10.2026)
-// pros може бути порожнім [] — тоді блок не показується
+// checked: формат ДД.ММ.РРРР
+// pros / cons можуть бути [] — тоді блок не показується
 const mods = [
+  {
+    id: "a-rivals",
+    title: "a",
+    status: "works",
+    placeUrl: "https://www.roblox.com/games/96885652495783/a",
+    creator: "trev",
+    creatorUrl: "https://www.roblox.com/users/1422380479/profile",
+    creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-824E206DFE3A66D06256374B6A4449F6-Png/150/150/AvatarHeadshot/Webp/noFilter",
+    group: "Yea ofc",
+    groupUrl: "https://www.roblox.com/communities/529875523/Yea-ofc",
+    groupAvatar: "https://tr.rbxcdn.com/180DAY-c505e9ee815eca2d7872018c5dace142/150/150/Image/Webp/noFilter",
+    discordUrl: "https://discord.gg/ejeXS2JfVE",
+    discordIcon: "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
+    checked: "24.10.2026",
+    tag: "rauls, banana",
+    image: "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
+    pros: {
+      uk: ["Коди freebux (2к 🪙)"],
+      ru: ["Коды freebux (2к 🪙)"],
+      en: ["Freebux codes (2k 🪙)"]
+    },
+    cons: {
+      uk: [],
+      ru: [],
+      en: []
+    }
+  },
   {
     id: "josh-rivals-modded",
     title: "Josh's RIVALS MODDED",
@@ -243,14 +273,22 @@ function renderMods(){
     const tagHtml = m.tag ? '<span class="tag">'+esc(m.tag)+'</span>' : "";
     const thumbHtml = m.image ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' : '';
     const avatarHtml = m.creatorAvatar ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' : '';
+    const groupHtml = (m.group && m.groupUrl)
+      ? '<span class="dot">•</span><a class="group" href="'+esc(m.groupUrl)+'" target="_blank" rel="noopener noreferrer">'
+        + (m.groupAvatar ? '<img class="avatar group" src="'+esc(m.groupAvatar)+'" alt="" loading="lazy" />' : '')
+        + esc(m.group)+'</a>'
+      : '';
+    const discordHtml = m.discordUrl
+      ? '<a class="discord-link" href="'+esc(m.discordUrl)+'" target="_blank" rel="noopener noreferrer" title="Discord">'
+        + (m.discordIcon ? '<img class="discord-icon" src="'+esc(m.discordIcon)+'" alt="Discord" loading="lazy" />' : 'Discord')
+        + '</a>'
+      : '';
 
-    const prosBox = prosArr.length
-      ? '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>'
+    const prosBox = prosArr.length ? '<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>' : '';
+    const consBox = consArr.length ? '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>' : '';
+    const listsHtml = (prosArr.length || consArr.length)
+      ? '<div class="' + ((prosArr.length && consArr.length) ? 'lists' : 'lists single') + '">' + prosBox + consBox + '</div>'
       : '';
-    const consBox = consArr.length
-      ? '<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>'
-      : '';
-    const listsClass = (prosArr.length && consArr.length) ? 'lists' : 'lists single';
 
     return '<article class="card">'
       + '<div class="card-head">'
@@ -263,16 +301,15 @@ function renderMods(){
       +     '<div class="card-meta">'
       +       avatarHtml
       +       '<a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a>'
+      +       groupHtml
       +       '<span class="dot">•</span>'
       +       '<span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'
+      +       (discordHtml ? '<span class="dot">•</span>'+discordHtml : '')
       +     '</div>'
       +     tagHtml
       +   '</div>'
       + '</div>'
-      + '<div class="'+listsClass+'">'
-      +   prosBox
-      +   consBox
-      + '</div>'
+      + listsHtml
       + '</article>';
   }).join("");
 }
