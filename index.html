@@ -4,50 +4,56 @@
 <meta charset="UTF-8" />
 <!--
 ==============================================================
-  RIVALS HUB — ИНСТРУКЦИЯ ДЛЯ ИИ-РЕДАКТОРОВ (НЕ УДАЛЯТЬ)
+  RIVALS HUB — ІНСТРУКЦІЯ ДЛЯ ІІ-РЕДАКТОРІВ (НЕ ВИДАЛЯТИ)
 ==============================================================
-  Файл единый: index.html. Стили и скрипт внутри.
-  Внешних зависимостей нет (только Google Fonts Inter).
-  styles.css, script.js, README.md — быть НЕ ДОЛЖНО.
+  Файл єдиний: index.html. Стилі та скрипт всередині.
+  Зовнішніх залежностей немає (тільки Google Fonts Inter).
+  styles.css, script.js, README.md — бути НЕ ПОВИННО.
 
-  ЖЁСТКИЕ ПРАВИЛА:
-  1. НЕ переделывай дизайн под себя. Сохраняй цвета, шрифты,
-     отступы, скругления, текущий тёмный стиль.
-  2. НЕ добавляй новые секции, кнопки, формы, фреймворки,
-     зависимости, аналитику, cookie-баннеры — если пользователь
-     ЯВНО не попросил.
-  3. НЕ выноси стили/скрипты в отдельные файлы.
-  4. НЕ удаляй мультиязычность (uk/ru/en), кнопки UA/RU/EN,
-     фильтр статусов, кнопку "Предложить", тег, логотип игры,
+  ЖОРСТКІ ПРАВИЛА:
+  1. НЕ переробляй дизайн під себе. Зберігай кольори, шрифти,
+     відступи, скруглення, поточний темний стиль.
+  2. НЕ додавай нові секції, кнопки, форми, фреймворки,
+     залежності, аналітику, cookie-банери — якщо користувач
+     ЯВНО не попросив.
+  3. НЕ винось стилі/скрипт в окремі файли.
+  4. НЕ видаляй мультиязычність (uk/ru/en), кнопки UA/RU/EN,
+     фільтр статусів, кнопку "Запропонувати", тег, логотип гри,
      аватар автора.
-  5. НЕ добавляй поле "описание" обратно в карточку — оно
-     намеренно удалено.
-  6. НЕ делай "я так вижу красивее". Делай только то, что
-     просят. Непонятно — спроси, не додумывай.
+  5. НЕ додавай поле "опис" назад у картку — воно навмисно
+     видалено.
+  6. НЕ роби "я так бачу красивіше". Роби лише те, що
+     просять. Незрозуміло — спитай, не додумуй.
 
-  СТАТУСЫ (только эти три):
+  СТАТУСИ (тільки ці три):
     "works"    — Работает / Працює / Works
     "broken"   — Не работает / Не працює / Broken
     "deleted"  — Удалён / Видалений / Deleted
 
-  КАК ДОБАВИТЬ НОВЫЙ МОД:
-    Скопируй объект в массиве `const mods = [...]` и замени:
+  ФОРМАТ ДАТИ: ДД.ММ.РРРР (наприклад, 24.10.2026)
+
+  ЯК ДОДАТИ НОВИЙ МОД:
+    Скопіюй об'єкт у масиві `const mods = [...]` і заміни:
       id, title, status, placeUrl, creator, creatorUrl,
-      checked ("YYYY-MM-DD"), tag (строка, напр. "modded shop"),
-      image          — ссылка на логотип игры (rbxcdn)
-      creatorAvatar  — ссылка на аватар автора (rbxcdn headshot)
+      checked ("ДД.ММ.РРРР"), tag (рядок, напр. "modded shop"),
+      image          — посилання на логотип гри (rbxcdn)
+      creatorAvatar  — посилання на аватар автора (rbxcdn headshot)
       pros {uk,ru,en}, cons {uk,ru,en}
-    Все три языка в pros/cons обязательны.
+    Усі три мови в pros/cons обов'язкові.
 
-  КАК ДОБАВИТЬ ЯЗЫК (например, PL):
-    В translations добавь `pl: { ... }` со всеми полями,
-    в .lang-switcher добавь кнопку data-lang="pl",
-    в каждый mod добавь `pl` в pros/cons.
+  ЯК ДОДАТИ МОВУ (наприклад, PL):
+    У translations додай `pl: { ... }` з усіма полями,
+    у .lang-switcher додай кнопку data-lang="pl",
+    у кожен mod додай `pl` у pros/cons.
 
-  КОНТАКТ / ПРИЁМ ЗАЯВОК:
+  КОНТАКТ / ПРИЙОМ ЗАЯВОК:
     Кнопка #suggestBtn — <a href="mailto:arsebor100@gmail.com?...">.
-    Сменить канал = поменять ТОЛЬКО href у #suggestBtn и текст
+    Змінити канал = змінити ТІЛЬКИ href у #suggestBtn і текст
     translations.suggest.
+
+  У МАЙБУТНЬОМУ (не зараз, не роби без прохання):
+    - шрифт у стилі Rivals (заміна font-family у :root/body)
+    - звуки Rivals (Audio API, клік по кнопках/картках)
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -136,7 +142,7 @@ button,select{font:inherit}
     <a class="suggest-btn" id="suggestBtn"
        href="mailto:arsebor100@gmail.com?subject=Rivals%20Hub%20suggestion&body=Roblox%20link%3A%0Ahttps%3A%2F%2Fwww.roblox.com%2Fgames%2F17625359962%2FRIVALS%20(example)"
        target="_blank" rel="noopener noreferrer">
-      <span id="suggestLabel">Предложить мод / дополнение</span>
+      <span id="suggestLabel">Запропонувати мод / доповнення</span>
     </a>
   </section>
   <section id="modList" class="mod-list"></section>
@@ -151,8 +157,9 @@ const translations = {
 
 const statusOrder = ["all","works","broken","deleted"];
 
-// ── СПИСОК МОДОВ ─────────────────────────────────────────────
+// ── СПИСОК МОДІВ ─────────────────────────────────────────────
 // status: "works" | "broken" | "deleted"
+// checked: формат ДД.ММ.РРРР (наприклад, 24.10.2026)
 const mods = [
   {
     id: "josh-rivals-modded",
@@ -161,14 +168,14 @@ const mods = [
     placeUrl: "https://www.roblox.com/games/94069113295113/Joshs-RIVALS-MODDED",
     creator: "Ixspan7039",
     creatorUrl: "https://www.roblox.com/users/10797552845/profile",
-    checked: "2026-10-24",
+    checked: "24.10.2026",
     tag: "modded shop",
     image: "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
     creatorAvatar: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
     pros: {
-      uk: ["Стандартні звуки ходьби, стрибків і кліків з оригіналу"],
-      ru: ["Стандартные звуки ходьбы, прыжков и кликов из оригинала"],
-      en: ["Original walking, jumping and UI click sounds"]
+      uk: ["Стандартні звуки ходьби, стрибків і звук натискання GUI з оригіналу Rivals"],
+      ru: ["Стандартные звуки ходьбы, прыжков и звук нажатия GUI из оригинала Rivals"],
+      en: ["Original walking, jumping sounds and GUI click sound from Rivals"]
     },
     cons: {
       uk: ["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
