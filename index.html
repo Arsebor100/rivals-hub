@@ -9,41 +9,49 @@
   Файл єдиний: index.html. Стилі та скрипт всередині.
 
   ЛОКАЛЬНІ АСЕТИ (в корені репо):
-    - Untitled6.png                                — лого Rivals (шапка + GameLogo в лоадері)
+    - Untitled6.png                                — лого Rivals
     - Images_Logo_N_512_13854780042.png            — буква N
     - Images_Logo_G_512_13854780213.png            — буква G
     - Rubik-*.ttf                                  — шрифт Rubik
     - 2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg — звук інтро
     - click_sound_177266782.ogg                    — звук кліку
 
-  ЛОАДЕР — послідовність (реконструйована з LoadingScreen.rbxmx):
-    1. 200ms пауза.
-    2. 200-1400ms: N зліва, G справа спірально з'їжджаються до центру,
-       обертаючись (формула з _SpiralAnimation: (sqrt(1-(p/100-1)^2)*540+180)%360).
-       Зупиняються поряд (N зліва, G справа, ЗАЗОР ~ -22%/+22%).
-    3. 1400-1700ms: тримаються.
-    4. 1700-2200ms: SplitLogo — роз'їжджаються (N вліво, G вправо, з обертанням).
-    5. 2000-2500ms: GameLogo (Untitled6.png) scale-in 0.3→1 з opacity.
-    6. 2500-3200ms: GameLogo тримається.
-    7. 3200-3700ms: fade out всього лоадера.
-    Показується один раз за сесію ("rivalsHubLoaded").
+  ЛОАДЕР:
+    1. 150ms пауза.
+    2. 150-1400ms: N зліва, G справа → центр (БЕЗ перехрещу).
+       Формула: nX = -far + (far - gap) * ease → від -far до -gap.
+       (Був баг: стояло (gap + far) — знак невірний, через це N/G
+       мінялися місцями. Виправлено.)
+    3. 1400-1650ms: тримаються поряд (N зліва, G справа, зазор ~20%).
+    4. 1650-2100ms: SplitLogo — роз'їжджаються назад.
+    5. 1950-2500ms: GameLogo (Untitled6.png) scale-in 0.35→1.
+    6. 2500-3000ms: GameLogo тримається.
+    7. 3000-3500ms: fade out.
+    Один раз за сесію ("rivalsHubLoaded").
 
-  ЗВУК:
-    - intro: пробує autoplay, при блокуванні — на першу взаємодію.
-    - click: на клік/тап по <a>, <button>, .codes-row.
+  ЗВУК (важливо):
+    Браузери БЛОКУЮТЬ autoplay без взаємодії. Це не баг, це
+    політика Chrome/Safari. Обходити можна так:
+      1) Перший візит: показуємо hint "tap for sound". Після
+         першої взаємодії звук грає і браузер запам'ятовує сайт.
+      2) Наступні візити (у цьому браузері): autoplay може
+         спрацювати сам (Chrome дозволяє при "high engagement").
+    Тригери (перший, що спрацює):
+      pointerdown, mousemove, scroll, keydown, touchstart.
+    На десктопі mousemove часто вже достатньо.
 
   КОПІЮВАННЯ КОДУ:
     - Клік по .codes-row копіює частину ДО " — " (тільки код).
     - Показує "Скопійовано!" на 1.2с.
 
-  ЖОРСТКІ ПРАВИЛА:
-  1-10 — ті ж самі. НЕ переробляй дизайн. НЕ додавай секції.
-  НЕ видаляй мультиязычність, статуси, копіювання, N/G, GameLogo.
-  НЕ додавай опис назад у картку.
+  ЖОРСТКІ ПРАВИЛА (ті ж):
+  1-10 — НЕ переробляй дизайн, НЕ додавай секції, НЕ видаляй
+  мультиязычність, статуси, копіювання, N/G, GameLogo,
+  НЕ додавай "опис" назад у картку.
 
   СТАТУСИ: "works" | "broken" | "deleted"
-  ФОРМАТ ДАТИ: ДД.ММ.РРРР
-  КОНТАКТ: #suggestBtn — mailto:arsebor100@gmail.com
+  ДАТА: ДД.ММ.РРРР
+  КОНТАКТ: mailto:arsebor100@gmail.com
 ==============================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -136,25 +144,28 @@ button,select{font:inherit}
 
 /* ── LOADER ── */
 .loader{position:fixed;inset:0;z-index:9999;background:#05070d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:1;transition:opacity .5s ease;pointer-events:all;overflow:hidden}
-.loader::before{content:"";position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle, rgba(124,58,237,.32), transparent 65%);filter:blur(50px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.loader::before{content:"";position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle, rgba(124,58,237,.32), transparent 65%);filter:blur(50px);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:loaderPulse 2.4s ease-in-out infinite}
 
 .loader-stage{
   position:relative;
   width:220px;height:220px;
   display:grid;place-items:center;
+  overflow:visible;
 }
 
 .logo-half{
-  position:absolute;inset:0;
+  position:absolute;
+  inset:0;
   opacity:0;
   will-change:transform,opacity;
   transform-origin:50% 50%;
+  display:grid;place-items:center;
 }
 .logo-half img{
   width:100%;height:100%;
   object-fit:contain;
   pointer-events:none;
-  filter:drop-shadow(0 10px 30px rgba(124,58,237,.35));
+  filter:drop-shadow(0 10px 30px rgba(124,58,237,.4));
 }
 
 .game-logo{
@@ -164,13 +175,30 @@ button,select{font:inherit}
   object-fit:contain;
   opacity:0;
   will-change:transform,opacity;
-  transform:scale(.3);
+  transform:scale(.35);
   transform-origin:50% 50%;
   filter:drop-shadow(0 20px 60px rgba(124,58,237,.6));
   pointer-events:none;
 }
 
 .loader-text{color:var(--soft);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55;position:relative;z-index:1}
+
+.loader-hint{
+  position:absolute;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:.72rem;
+  color:rgba(148,163,184,.5);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  opacity:0;
+  animation:hintPulse 1.6s ease-in-out infinite;
+  pointer-events:none;
+}
+.loader-hint.show{opacity:1}
+@keyframes hintPulse{0%,100%{opacity:.35}50%{opacity:.75}}
+@keyframes loaderPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
 
 @media (max-width:720px){
   .nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}
@@ -187,15 +215,16 @@ button,select{font:inherit}
 
 <div class="loader" id="loader">
   <div class="loader-stage">
-    <div class="logo-half logo-N" id="logoN">
+    <div class="logo-half" id="logoN">
       <img src="./Images_Logo_N_512_13854780042.png" alt="" />
     </div>
-    <div class="logo-half logo-G" id="logoG">
+    <div class="logo-half" id="logoG">
       <img src="./Images_Logo_G_512_13854780213.png" alt="" />
     </div>
     <img class="game-logo" id="gameLogo" src="./Untitled6.png" alt="Rivals" />
   </div>
   <div class="loader-text" id="loaderText">Loading…</div>
+  <div class="loader-hint" id="loaderHint">tap for sound 🔊</div>
 </div>
 
 <div class="glow glow-a"></div>
@@ -243,7 +272,8 @@ const translations = {
     suggest:"Запропонувати мод / доповнення",
     loading:"Завантаження…",
     copied:"Скопійовано!",
-    clickToCopy:"клікни щоб скопіювати"
+    clickToCopy:"клікни щоб скопіювати",
+    tapForSound:"торкнись для звуку 🔊"
   },
   ru: {
     subtitle:"Каталог и статус проектов",status:"Статус",all:"Все",
@@ -253,7 +283,8 @@ const translations = {
     suggest:"Предложить мод / дополнение",
     loading:"Загрузка…",
     copied:"Скопировано!",
-    clickToCopy:"клик чтобы скопировать"
+    clickToCopy:"клик чтобы скопировать",
+    tapForSound:"коснись для звука 🔊"
   },
   en: {
     subtitle:"Catalog & status tracker",status:"Status",all:"All",
@@ -263,7 +294,8 @@ const translations = {
     suggest:"Suggest a mod / addition",
     loading:"Loading…",
     copied:"Copied!",
-    clickToCopy:"click to copy"
+    clickToCopy:"click to copy",
+    tapForSound:"tap for sound 🔊"
   }
 };
 
@@ -313,7 +345,7 @@ const mods = [
 const LANG_KEY = "rivalsHubLang";
 const LOADER_KEY = "rivalsHubLoaded";
 
-// ── ЗВУКИ ────────────────────────────────────────────────────
+// ── ЗВУК ────────────────────────────────────────────────────
 const SOUND_INTRO_URL = "./2102001_NosniyGames_SuperGolf_IntroSound_v4_6384899588.ogg";
 const SOUND_CLICK_URL = "./click_sound_177266782.ogg";
 
@@ -324,25 +356,43 @@ let introPlayed = false;
 
 function tryIntro() {
   if (introPlayed) return;
-  const p = introAudio.play();
-  if (p && p.then) {
-    p.then(() => { introPlayed = true; }).catch(() => {});
-  }
+  try {
+    introAudio.currentTime = 0;
+    const p = introAudio.play();
+    if (p && p.then) {
+      p.then(() => {
+        introPlayed = true;
+        const hint = document.getElementById("loaderHint");
+        if (hint) hint.classList.remove("show");
+      }).catch(() => {});
+    }
+  } catch(e){}
 }
+
+// Спроба №1: одразу
 tryIntro();
 
-function armIntroFallback() {
-  const retry = () => {
-    tryIntro();
-    document.removeEventListener("click", retry);
-    document.removeEventListener("touchstart", retry);
-    document.removeEventListener("keydown", retry);
-  };
-  document.addEventListener("click", retry);
-  document.addEventListener("touchstart", retry);
-  document.addEventListener("keydown", retry);
+// Спроба №2: на будь-яку активність (mousemove, scroll, клік, тап, клавіша, pointerdown)
+// На десктопі mousemove зазвичай спрацьовує першим.
+const soundTriggers = ["pointerdown","mousemove","scroll","keydown","touchstart","click"];
+function onAnyActivity() {
+  tryIntro();
+  if (introPlayed) {
+    soundTriggers.forEach(ev => document.removeEventListener(ev, onAnyActivity));
+  }
 }
-armIntroFallback();
+soundTriggers.forEach(ev => document.addEventListener(ev, onAnyActivity, { passive: true, once: false }));
+
+// Якщо через 600мс звук ще не зайшов — показуємо hint
+setTimeout(() => {
+  if (!introPlayed) {
+    const hint = document.getElementById("loaderHint");
+    if (hint) {
+      hint.textContent = (translations[currentLang] && translations[currentLang].tapForSound) || "tap for sound 🔊";
+      hint.classList.add("show");
+    }
+  }
+}, 600);
 
 function playClick() {
   try {
@@ -472,6 +522,8 @@ function applyLang(){
   statusLabel.textContent = t("status");
   suggestLabel.textContent = t("suggest");
   if (loaderText) loaderText.textContent = t("loading");
+  const hint = document.getElementById("loaderHint");
+  if (hint && !introPlayed) hint.textContent = t("tapForSound");
   document.documentElement.lang = currentLang;
   rebuildStatusFilter();
   langButtons.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
@@ -548,7 +600,7 @@ document.addEventListener("keydown", async (e) => {
   }
 });
 
-// ── LOADER (N/G → Split → GameLogo → Fade) ─────────────────
+// ── LOADER ──────────────────────────────────────────────────
 (function runLoader(){
   const loader = document.getElementById("loader");
   if (!loader) return;
@@ -561,95 +613,91 @@ document.addEventListener("keydown", async (e) => {
   const G = document.getElementById("logoG");
   const gameLogo = document.getElementById("gameLogo");
 
-  const stageW = () => loader.querySelector(".loader-stage").clientWidth || 220;
-  const halfGap = () => stageW() * 0.22; // разсTOяние смещения N/G от центра
-  const farX    = () => stageW() * 2.2;  // стартовое расстояние от центра
+  // Позиції у відсотках від ширини stage (transform: translateX(%))
+  const N_START_X = -180;   // % зсув вліво (за екраном)
+  const G_START_X =  180;   // % зсув вправо (за екраном)
+  const N_MID_X   = -30;    // % (ліва половина "NG")
+  const G_MID_X   =  30;    // % (права половина "NG")
+  const N_END_X   = -200;   // % (виліт вліво)
+  const G_END_X   =  200;   // % (виліт вправо)
 
-  // Таймлайн
-  const T_PAUSE       = 200;
-  const T_SPIRAL_DUR  = 1200;
-  const T_HOLD        = 300;
-  const T_SPLIT_DUR   = 500;
-  const T_LOGO_OVERLAP = 200; // GameLogo стартует за 200мс до конца SplitLogo
-  const T_LOGO_DUR    = 500;
-  const T_LOGO_HOLD   = 600;
-  const T_FADE_DUR    = 500;
+  // Таймлайн (ms)
+  const T_PAUSE      = 150;
+  const T_SLIDE_IN   = 1250;
+  const T_HOLD       = 250;
+  const T_SLIDE_OUT  = 450;
+  const T_LOGO_IN    = 550;
+  const T_LOGO_HOLD  = 500;
+  const T_FADE       = 500;
 
-  const T_SPIRAL_START = T_PAUSE;
-  const T_SPIRAL_END   = T_SPIRAL_START + T_SPIRAL_DUR;          // 1400
-  const T_SPLIT_START  = T_SPIRAL_END + T_HOLD;                   // 1700
-  const T_SPLIT_END    = T_SPLIT_START + T_SPLIT_DUR;             // 2200
-  const T_LOGO_START   = T_SPLIT_END - T_LOGO_OVERLAP;            // 2000
-  const T_LOGO_IN_END  = T_LOGO_START + T_LOGO_DUR;               // 2500
-  const T_FADE_START   = T_LOGO_IN_END + T_LOGO_HOLD;             // 3100
-  const T_END          = T_FADE_START + T_FADE_DUR;               // 3600
+  const T_IN_END     = T_PAUSE + T_SLIDE_IN;                    // 1400
+  const T_HOLD_END   = T_IN_END + T_HOLD;                       // 1650
+  const T_OUT_END    = T_HOLD_END + T_SLIDE_OUT;                // 2100
+  const T_LOGO_START = T_OUT_END - 150;                         // 1950 (трохи раніше)
+  const T_LOGO_END   = T_LOGO_START + T_LOGO_IN;                // 2500
+  const T_FADE_START = T_LOGO_END + T_LOGO_HOLD;                // 3000
+  const T_END        = T_FADE_START + T_FADE;                   // 3500
 
   const start = performance.now();
   let done = false;
 
+  function easeOutQuint(x){ return 1 - Math.pow(1 - x, 5); }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+  function lerp(a, b, k){ return a + (b - a) * k; }
+
   function frame(now){
     if (done) return;
     const e = now - start;
-    const gap = halfGap();
-    const far = farX();
 
-    if (e < T_SPIRAL_START) {
+    // ── Фаза 1: заїзд ──
+    if (e < T_PAUSE) {
       N.style.opacity = 0;
       G.style.opacity = 0;
-    } else if (e < T_SPIRAL_END) {
-      const t01 = (e - T_SPIRAL_START) / T_SPIRAL_DUR;
-      // Out Quint для позиции
-      const ease = 1 - Math.pow(1 - t01, 5);
-      const nX = -far + (gap + far) * ease;  // -far → -gap
-      const gX =  far - (gap + far) * ease;  //  far →  gap
-
-      // Вращение по формуле з _SpiralAnimation
-      const p = t01 * 100;
-      const rad = Math.sqrt(Math.max(0, 1 - Math.pow(p/100 - 1, 2)));
-      const angle = (rad * 540 + 180) % 360;
-
-      N.style.transform = 'translateX(' + nX + 'px) rotate(' + (-angle) + 'deg)';
-      G.style.transform = 'translateX(' + gX + 'px) rotate(' + (-angle) + 'deg)';
+    } else if (e < T_IN_END) {
+      const t01 = (e - T_PAUSE) / T_SLIDE_IN;
+      const ease = easeOutQuint(t01);
+      const nx = lerp(N_START_X, N_MID_X, ease);
+      const gx = lerp(G_START_X, G_MID_X, ease);
+      N.style.transform = 'translateX(' + nx + '%)';
+      G.style.transform = 'translateX(' + gx + '%)';
       N.style.opacity = Math.min(1, t01 * 2.5);
       G.style.opacity = Math.min(1, t01 * 2.5);
-    } else if (e < T_SPLIT_START) {
-      N.style.transform = 'translateX(' + (-gap) + 'px) rotate(0deg)';
-      G.style.transform = 'translateX(' + gap + 'px) rotate(0deg)';
+    } else if (e < T_HOLD_END) {
+      N.style.transform = 'translateX(' + N_MID_X + '%)';
+      G.style.transform = 'translateX(' + G_MID_X + '%)';
       N.style.opacity = 1;
       G.style.opacity = 1;
-    } else if (e < T_SPLIT_END) {
-      const t01 = (e - T_SPLIT_START) / T_SPLIT_DUR;
-      const ease = 1 - Math.pow(1 - t01, 3); // Out Cubic
-      const nX = -gap + (-far - (-gap)) * ease;
-      const gX =  gap + (far - gap) * ease;
-      const angle = ease * 360;
-
-      N.style.transform = 'translateX(' + nX + 'px) rotate(' + (-angle) + 'deg)';
-      G.style.transform = 'translateX(' + gX + 'px) rotate(' + (-angle) + 'deg)';
-      N.style.opacity = 1 - ease * 0.8;
-      G.style.opacity = 1 - ease * 0.8;
+    } else if (e < T_OUT_END) {
+      const t01 = (e - T_HOLD_END) / T_SLIDE_OUT;
+      const ease = easeOutCubic(t01);
+      const nx = lerp(N_MID_X, N_END_X, ease);
+      const gx = lerp(G_MID_X, G_END_X, ease);
+      N.style.transform = 'translateX(' + nx + '%)';
+      G.style.transform = 'translateX(' + gx + '%)';
+      N.style.opacity = 1 - ease * 0.6;
+      G.style.opacity = 1 - ease * 0.6;
     } else {
       N.style.opacity = 0;
       G.style.opacity = 0;
     }
 
-    // GameLogo
+    // ── GameLogo ──
     if (e < T_LOGO_START) {
       gameLogo.style.opacity = 0;
-      gameLogo.style.transform = 'scale(.3)';
-    } else if (e < T_LOGO_IN_END) {
-      const t01 = (e - T_LOGO_START) / T_LOGO_DUR;
-      const ease = 1 - Math.pow(1 - t01, 3);
+      gameLogo.style.transform = 'scale(.35)';
+    } else if (e < T_LOGO_END) {
+      const t01 = (e - T_LOGO_START) / T_LOGO_IN;
+      const ease = easeOutCubic(t01);
       gameLogo.style.opacity = ease;
-      gameLogo.style.transform = 'scale(' + (0.3 + 0.7 * ease) + ')';
+      gameLogo.style.transform = 'scale(' + lerp(0.35, 1, ease) + ')';
     } else {
       gameLogo.style.opacity = 1;
       gameLogo.style.transform = 'scale(1)';
     }
 
-    // Fade out
+    // ── Fade ──
     if (e >= T_FADE_START) {
-      const t01 = Math.min(1, (e - T_FADE_START) / T_FADE_DUR);
+      const t01 = Math.min(1, (e - T_FADE_START) / T_FADE);
       loader.style.opacity = 1 - t01;
     }
 
