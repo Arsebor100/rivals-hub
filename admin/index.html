@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rivals Hub — Admin</title>
+<style>
+@font-face{font-family:'Rubik';src:url('../assets/Rubik-Regular_12187288714.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'Rubik';src:url('../assets/Rubik-Bold_12187303601.ttf') format('truetype');font-weight:700;font-display:swap}
+:root{--bg:#070b14;--panel:rgba(15,23,42,.8);--line:rgba(148,163,184,.18);--text:#e2e8f0;--soft:#a5b4cf;--violet:#7c3aed;--violet-2:#c084fc}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Rubik',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.admin-wrap{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+h1{margin:0;font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+h1 span{color:var(--violet-2)}
+.back{font-size:.8rem;color:var(--soft);border:1px solid var(--line);border-radius:8px;padding:6px 12px}
+.back:hover{color:var(--text);border-color:rgba(196,181,253,.4)}
+.hint{color:var(--soft);font-size:.8rem;margin:0 0 20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+.panel h2{margin:0 0 12px;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:600}
+label{display:block;margin-bottom:12px;font-size:.78rem;color:var(--soft)}
+label span{display:block;margin-bottom:4px;font-weight:600}
+input,textarea,select{width:100%;background:rgba(15,23,42,.9);border:1px solid rgba(148,163,184,.2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:.85rem;outline:none;transition:border-color .12s ease}
+input:focus,textarea:focus,select:focus{border-color:var(--violet-2)}
+textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:700px){.row-2,.row-3{grid-template-columns:1fr}}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:.85rem;font-weight:600;border:1px solid;cursor:pointer;font-family:inherit;transition:all .15s ease}
+.btn-primary{background:linear-gradient(135deg,var(--violet),var(--violet-2));color:#fff;border-color:transparent}
+.btn-primary:hover{opacity:.92}
+.btn-ghost{background:transparent;color:var(--soft);border-color:var(--line)}
+.btn-ghost:hover{color:var(--text);border-color:rgba(196,181,253,.4)}
+.btn-danger{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.35)}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn:disabled{opacity:.4;cursor:wait}
+.actions-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.mod-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(148,163,184,.03)}
+.mod-row .info{flex:1;min-width:0}
+.mod-row .name{font-weight:600;font-size:.9rem;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mod-row .meta{font-size:.7rem;color:var(--soft)}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-size:.68rem;font-weight:700}
+.badge-works{background:rgba(34,197,94,.12);color:#86efac}
+.badge-broken{background:rgba(239,68,68,.12);color:#fca5a5}
+.badge-deleted{background:rgba(100,116,139,.12);color:#cbd5e1}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.row-actions .btn{padding:5px 10px;font-size:.72rem}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,23,42,.95);border:1px solid rgba(196,181,253,.4);color:#e2e8f0;padding:12px 20px;border-radius:12px;font-size:.85rem;opacity:0;transition:all .3s ease;pointer-events:none;z-index:1000;backdrop-filter:blur(10px);max-width:90%}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:rgba(239,68,68,.5);color:#fca5a5}
+.section-title{font-size:.72rem;color:var(--violet-2);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin:18px 0 10px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.section-title:first-child{margin-top:0}
+.helper{font-size:.7rem;color:rgba(148,163,184,.6);margin-top:-8px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="top">
+    <h1>Rivals Hub <span>Admin</span></h1>
+    <a class="back" href="../">← На сайт</a>
+  </div>
+  <p class="hint">Токен зберігається тільки у цьому браузері. Зміни летять у GitHub автоматично.</p>
+
+  <!-- AUTH -->
+  <div class="panel" id="authView">
+    <h2>GitHub токен</h2>
+    <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off" spellcheck="false" />
+    <div class="actions-bar">
+      <button class="btn btn-primary" id="saveTokenBtn">Зберегти токен</button>
+      <a class="btn btn-ghost" href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">Створити токен</a>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div id="listView" style="display:none">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="addBtn">➕ Додати новий мод</button>
+        <button class="btn btn-danger" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+    <div id="modsList"></div>
+  </div>
+
+  <!-- FORM -->
+  <div id="formView" style="display:none">
+    <div class="panel">
+      <h2 id="formTitle">Новий мод</h2>
+
+      <div class="section-title">Основне</div>
+      <label><span>Назва *</span><input id="fTitle" placeholder="Josh's RIVALS MODDED" /></label>
+      <div class="row-2">
+        <label><span>ID (латиниця, унікальний)</span><input id="fId" placeholder="авто якщо порожнє" /></label>
+        <label><span>Статус *</span>
+          <select id="fStatus">
+            <option value="works">Працює</option>
+            <option value="broken">Не працює</option>
+            <option value="deleted">Видалений</option>
+          </select>
+        </label>
+      </div>
+      <label><span>Посилання на гру *</span><input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." /></label>
+      <label><span>Логотип гри (URL, необов'язково)</span><input id="fImage" placeholder="https://tr.rbxcdn.com/... або залиш пустим" /></label>
+      <label><span>Дата перевірки (ДД.ММ.РРРР)</span>
+        <div style="display:flex;gap:8px"><input id="fChecked" placeholder="25.10.2026" style="flex:1" /><button class="btn btn-ghost" id="todayBtn" type="button">Сьогодні</button></div>
+      </label>
+
+      <div class="section-title">Автор</div>
+      <div class="row-2">
+        <label><span>Нікнейм *</span><input id="fCreator" placeholder="Ixspan7039" /></label>
+        <label><span>Профіль (URL) *</span><input id="fCreatorUrl" placeholder="https://www.roblox.com/users/.../profile" /></label>
+      </div>
+      <label><span>Аватар автора (URL, необов'язково)</span><input id="fCreatorAvatar" placeholder="https://tr.rbxcdn.com/..." /></label>
+
+      <div class="section-title">Група (необов'язково)</div>
+      <div class="row-2">
+        <label><span>Назва групи</span><input id="fGroup" placeholder="Yea ofc" /></label>
+        <label><span>Посилання на групу</span><input id="fGroupUrl" placeholder="https://www.roblox.com/communities/..." /></label>
+      </div>
+      <label><span>Логотип групи (URL)</span><input id="fGroupAvatar" placeholder="https://tr.rbxcdn.com/..." /></label>
+
+      <div class="section-title">Discord (необов'язково)</div>
+      <label><span>Посилання на Discord</span><input id="fDiscordUrl" placeholder="https://discord.gg/..." /></label>
+      <label><span>Іконка Discord (URL)</span><input id="fDiscordIcon" placeholder="https://... .png" /></label>
+
+      <div class="section-title">Теги</div>
+      <label><span>Через кому</span><input id="fTags" placeholder="modded shop, private, old" /></label>
+
+      <div class="section-title">Коди (необов'язково)</div>
+      <div class="row-3">
+        <label><span>UA</span><input id="fCodesUk" placeholder="FREEBUX — 2к монет" /></label>
+        <label><span>RU</span><input id="fCodesRu" placeholder="FREEBUX — 2к монет" /></label>
+        <label><span>EN</span><input id="fCodesEn" placeholder="FREEBUX — 2k coins" /></label>
+      </div>
+
+      <div class="section-title">Плюси (по одному на рядок)</div>
+      <div class="row-3">
+        <label><span>UA</span><textarea id="fProsUk" rows="3"></textarea></label>
+        <label><span>RU</span><textarea id="fProsRu" rows="3"></textarea></label>
+        <label><span>EN</span><textarea id="fProsEn" rows="3"></textarea></label>
+      </div>
+
+      <div class="section-title">Мінуси (по одному на рядок)</div>
+      <div class="row-3">
+        <label><span>UA</span><textarea id="fConsUk" rows="3"></textarea></label>
+        <label><span>RU</span><textarea id="fConsRu" rows="3"></textarea></label>
+        <label><span>EN</span><textarea id="fConsEn" rows="3"></textarea></label>
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-primary" id="saveBtn">💾 Зберегти</button>
+        <button class="btn btn-ghost" id="cancelBtn">Скасувати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REPO = "Arsebor100/rivals-hub";
+const FILE_PATH = "mods.json";
+const TOKEN_KEY = "rivalsHubAdminToken";
+
+const $ = id => document.getElementById(id);
+let mods = [];
+let editingId = null; // null = add new
+let sha = null;
+
+// INLINE fallback — если mods.json ещё нет в репо
+const INITIAL_MODS = [
+  { id:"a-rivals", title:"a", status:"broken",
+    placeUrl:"https://www.roblox.com/games/96885652495783/a",
+    creator:"trev", creatorUrl:"https://www.roblox.com/users/1422380479/profile",
+    creatorAvatar:"https://tr.rbxcdn.com/30DAY-AvatarHeadshot-824E206DFE3A66D06256374B6A4449F6-Png/150/150/AvatarHeadshot/Webp/noFilter",
+    group:"Yea ofc", groupUrl:"https://www.roblox.com/communities/529875523/Yea-ofc",
+    groupAvatar:"https://tr.rbxcdn.com/180DAY-c505e9ee815eca2d7872018c5dace142/150/150/Image/Webp/noFilter",
+    discordUrl:"https://discord.gg/ejeXS2JfVE",
+    discordIcon:"https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
+    checked:"25.10.2026", tags:["rauls","banana"],
+    codes:{uk:"FREEBUX — 2к монет",ru:"FREEBUX — 2к монет",en:"FREEBUX — 2k coins"},
+    image:"https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
+    pros:{uk:[],ru:[],en:[]},
+    cons:{uk:["Гра стала недоступною (не видалена)"],ru:["Игра стала недоступной (не удалена)"],en:["Game became inaccessible (not deleted)"]}
+  },
+  { id:"josh-rivals-modded", title:"Josh's RIVALS MODDED", status:"works",
+    placeUrl:"https://www.roblox.com/games/94069113295113/Joshs-RIVALS-MODDED",
+    creator:"Ixspan7039", creatorUrl:"https://www.roblox.com/users/10797552845/profile",
+    checked:"24.10.2026", tags:["modded shop"],
+    image:"https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
+    creatorAvatar:"https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
+    pros:{uk:[],ru:[],en:[]},
+    cons:{
+      uk:["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
+      ru:["Платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
+      en:["Paid admin panel","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
+    }
+  }
+];
+
+function toast(msg, isErr){
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.toggle("err", !!isErr);
+  el.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove("show"), 3000);
+}
+function getToken(){ try { return localStorage.getItem(TOKEN_KEY); } catch(e){ return null; } }
+function setToken(v){ try { localStorage.setItem(TOKEN_KEY, v); } catch(e){} }
+function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch(e){} }
+
+function todayUA(){
+  const d = new Date();
+  return String(d.getDate()).padStart(2,"0") + "." + String(d.getMonth()+1).padStart(2,"0") + "." + d.getFullYear();
+}
+function b64Enc(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64Dec(b64){ return decodeURIComponent(escape(atob(b64.replace(/\s/g,"")))); }
+
+function setView(v){
+  $("authView").style.display = v === "auth" ? "" : "none";
+  $("listView").style.display = v === "list" ? "" : "none";
+  $("formView").style.display = v === "form" ? "" : "none";
+}
+
+function statusLabel(s){
+  return s === "works" ? "Працює" : s === "broken" ? "Не працює" : s === "deleted" ? "Видалений" : s;
+}
+
+// ── GitHub ─────────────────────────────────────────────────
+async function verifyToken(token){
+  const h = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" };
+  try {
+    const u = await fetch("https://api.github.com/user", { headers: h });
+    if (u.status === 401) return { ok:false, msg:"Токен невалідний або прострочений" };
+    if (!u.ok) return { ok:false, msg:"GitHub API: " + u.status };
+    const r = await fetch("https://api.github.com/repos/" + REPO, { headers: h });
+    if (r.status === 404) return { ok:false, msg:"Немає доступу до " + REPO };
+    if (!r.ok) return { ok:false, msg:"Перевірка репо: " + r.status };
+    return { ok:true };
+  } catch(e) { return { ok:false, msg:"Мережа: " + e.message }; }
+}
+
+async function fetchMods(){
+  const token = getToken();
+  const res = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+FILE_PATH, {
+    headers: { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" }
+  });
+  if (res.status === 404) {
+    sha = null;
+    mods = JSON.parse(JSON.stringify(INITIAL_MODS));
+    toast("mods.json ще нема — перше збереження створить його з 2 базовими модами");
+    return;
+  }
+  if (res.status === 401) { clearToken(); throw new Error("Токен невалідний"); }
+  if (!res.ok) throw new Error("GET " + res.status);
+  const data = await res.json();
+  sha = data.sha;
+  mods = JSON.parse(b64Dec(data.content));
+}
+
+async function commitMods(message){
+  const token = getToken();
+  const body = {
+    message: message,
+    content: b64Enc(JSON.stringify(mods, null, 2))
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch("https://api.github.com/repos/"+REPO+"/contents/"+FILE_PATH, {
+    method: "PUT",
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || ("PUT " + res.status));
+  }
+  const data = await res.json();
+  sha = data.content.sha;
+}
+
+// ── List ───────────────────────────────────────────────────
+function renderList(){
+  const list = $("modsList");
+  if (mods.length === 0) {
+    list.innerHTML = '<div class="panel"><p class="hint" style="margin:0">Поки порожньо. Натисни «Додати новий мод».</p></div>';
+    return;
+  }
+  list.innerHTML = mods.map(m => {
+    const mkBtn = st => '<button class="btn btn-ghost '+(m.status===st?'':'')+'" data-action="status" data-id="'+m.id+'" data-status="'+st+'" '+(m.status===st?'disabled':'')+'>'+statusLabel(st)+'</button>';
+    return '<div class="panel" style="padding:14px">'
+      + '<div class="mod-row" style="border:none;background:transparent;padding:0;margin-bottom:12px">'
+      +   '<div class="info"><div class="name">'+m.title+'</div><div class="meta">'+m.id+' · <span class="badge badge-'+m.status+'">'+statusLabel(m.status)+'</span></div></div>'
+      + '</div>'
+      + '<div class="row-actions">'
+      +   mkBtn("works") + mkBtn("broken") + mkBtn("deleted")
+      +   '<span style="flex:1"></span>'
+      +   '<button class="btn btn-ghost" data-action="edit" data-id="'+m.id+'">✏️ Редагувати</button>'
+      +   '<button class="btn btn-danger" data-action="delete" data-id="'+m.id+'">🗑 Видалити</button>'
+      + '</div>'
+      + '</div>';
+  }).join("");
+}
+
+// ── Form ───────────────────────────────────────────────────
+function fillForm(m){
+  $("fTitle").value = m.title || "";
+  $("fId").value = m.id || "";
+  $("fStatus").value = m.status || "works";
+  $("fPlaceUrl").value = m.placeUrl || "";
+  $("fImage").value = m.image || "";
+  $("fChecked").value = m.checked || todayUA();
+  $("fCreator").value = m.creator || "";
+  $("fCreatorUrl").value = m.creatorUrl || "";
+  $("fCreatorAvatar").value = m.creatorAvatar || "";
+  $("fGroup").value = m.group || "";
+  $("fGroupUrl").value = m.groupUrl || "";
+  $("fGroupAvatar").value = m.groupAvatar || "";
+  $("fDiscordUrl").value = m.discordUrl || "";
+  $("fDiscordIcon").value = m.discordIcon || "";
+  $("fTags").value = Array.isArray(m.tags) ? m.tags.join(", ") : "";
+  $("fCodesUk").value = (m.codes && m.codes.uk) || "";
+  $("fCodesRu").value = (m.codes && m.codes.ru) || "";
+  $("fCodesEn").value = (m.codes && m.codes.en) || "";
+  $("fProsUk").value = (m.pros && Array.isArray(m.pros.uk)) ? m.pros.uk.join("\n") : "";
+  $("fProsRu").value = (m.pros && Array.isArray(m.pros.ru)) ? m.pros.ru.join("\n") : "";
+  $("fProsEn").value = (m.pros && Array.isArray(m.pros.en)) ? m.pros.en.join("\n") : "";
+  $("fConsUk").value = (m.cons && Array.isArray(m.cons.uk)) ? m.cons.uk.join("\n") : "";
+  $("fConsRu").value = (m.cons && Array.isArray(m.cons.ru)) ? m.cons.ru.join("\n") : "";
+  $("fConsEn").value = (m.cons && Array.isArray(m.cons.en)) ? m.cons.en.join("\n") : "";
+}
+
+function slugify(str){
+  return String(str).toLowerCase().trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-а-яёіїєґ]/gi, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40) || ("mod-" + Date.now().toString(36));
+}
+
+function linesToArr(v){
+  return String(v||"").split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+}
+
+function readForm(){
+  const title = $("fTitle").value.trim();
+  if (!title) { toast("Назва обов'язкова", true); return null; }
+  const placeUrl = $("fPlaceUrl").value.trim();
+  if (!placeUrl) { toast("Посилання на гру обов'язкове", true); return null; }
+  const creator = $("fCreator").value.trim();
+  if (!creator) { toast("Нікнейм автора обов'язковий", true); return null; }
+  const creatorUrl = $("fCreatorUrl").value.trim();
+  if (!creatorUrl) { toast("Профіль автора обов'язковий", true); return null; }
+
+  let id = $("fId").value.trim() || slugify(title);
+  // Проверка уникальности для нового
+  if (editingId === null && mods.some(m => m.id === id)) {
+    id = id + "-" + Date.now().toString(36).slice(-4);
+  }
+
+  const tags = $("fTags").value.split(",").map(s => s.trim()).filter(Boolean);
+
+  const codesUk = $("fCodesUk").value.trim();
+  const codesRu = $("fCodesRu").value.trim();
+  const codesEn = $("fCodesEn").value.trim();
+  const codes = (codesUk || codesRu || codesEn)
+    ? { uk: codesUk, ru: codesRu || codesUk, en: codesEn || codesUk }
+    : undefined;
+
+  const obj = {
+    id, title,
+    status: $("fStatus").value,
+    placeUrl,
+    creator, creatorUrl
+  };
+  const creatorAvatar = $("fCreatorAvatar").value.trim();
+  if (creatorAvatar) obj.creatorAvatar = creatorAvatar;
+
+  const group = $("fGroup").value.trim();
+  const groupUrl = $("fGroupUrl").value.trim();
+  if (group && groupUrl) {
+    obj.group = group;
+    obj.groupUrl = groupUrl;
+    const groupAvatar = $("fGroupAvatar").value.trim();
+    if (groupAvatar) obj.groupAvatar = groupAvatar;
+  }
+
+  const discordUrl = $("fDiscordUrl").value.trim();
+  if (discordUrl) {
+    obj.discordUrl = discordUrl;
+    const discordIcon = $("fDiscordIcon").value.trim();
+    if (discordIcon) obj.discordIcon = discordIcon;
+  }
+
+  obj.checked = $("fChecked").value.trim() || todayUA();
+  if (tags.length) obj.tags = tags;
+  if (codes) obj.codes = codes;
+
+  const image = $("fImage").value.trim();
+  if (image) obj.image = image;
+
+  obj.pros = {
+    uk: linesToArr($("fProsUk").value),
+    ru: linesToArr($("fProsRu").value),
+    en: linesToArr($("fProsEn").value)
+  };
+  obj.cons = {
+    uk: linesToArr($("fConsUk").value),
+    ru: linesToArr($("fConsRu").value),
+    en: linesToArr($("fConsEn").value)
+  };
+
+  return obj;
+}
+
+// ── Actions ────────────────────────────────────────────────
+async function saveForm(){
+  const obj = readForm();
+  if (!obj) return;
+
+  $("saveBtn").disabled = true;
+  try {
+    if (editingId === null) {
+      mods.push(obj);
+      await commitMods("Add mod: " + obj.title);
+      toast("Додано: " + obj.title);
+    } else {
+      const idx = mods.findIndex(m => m.id === editingId);
+      if (idx >= 0) mods[idx] = obj;
+      await commitMods("Edit mod: " + obj.title);
+      toast("Оновлено: " + obj.title);
+    }
+    editingId = null;
+    renderList();
+    setView("list");
+  } catch(e) {
+    toast("Помилка: " + e.message, true);
+  } finally {
+    $("saveBtn").disabled = false;
+  }
+}
+
+async function changeStatus(id, status){
+  const mod = mods.find(m => m.id === id);
+  if (!mod || mod.status === status) return;
+  if (status === "deleted" && !confirm("Позначити як ВИДАЛЕНИЙ?")) return;
+  mod.status = status;
+  mod.checked = todayUA();
+  try {
+    await commitMods("Status: " + mod.title + " → " + status);
+    renderList();
+    toast("OK · " + mod.title + " → " + statusLabel(status));
+  } catch(e) {
+    toast("Помилка: " + e.message, true);
+  }
+}
+
+async function deleteMod(id){
+  const mod = mods.find(m => m.id === id);
+  if (!mod) return;
+  if (!confirm("Видалити «" + mod.title + "» назавжди з mods.json?\n(краще використати статус «Видалений», якщо не хочеш втрачати дані)")) return;
+  mods = mods.filter(m => m.id !== id);
+  try {
+    await commitMods("Delete mod: " + mod.title);
+    renderList();
+    toast("Видалено: " + mod.title);
+  } catch(e) {
+    toast("Помилка: " + e.message, true);
+    // откат — перезагрузить
+    try { await fetchMods(); renderList(); } catch(_){}
+  }
+}
+
+// ── Events ─────────────────────────────────────────────────
+$("saveTokenBtn").addEventListener("click", async () => {
+  const token = $("tokenInput").value.trim();
+  if (!token) { toast("Введи токен", true); return; }
+  $("saveTokenBtn").disabled = true;
+  $("saveTokenBtn").textContent = "Перевіряю…";
+  const res = await verifyToken(token);
+  $("saveTokenBtn").disabled = false;
+  $("saveTokenBtn").textContent = "Зберегти токен";
+  if (!res.ok) { toast(res.msg, true); return; }
+  setToken(token);
+  $("tokenInput").value = "";
+  await boot();
+  toast("Токен збережено");
+});
+
+$("logoutBtn").addEventListener("click", () => {
+  if (!confirm("Logout? Токен буде видалено з цього браузера.")) return;
+  clearToken();
+  location.reload();
+});
+
+$("addBtn").addEventListener("click", () => {
+  editingId = null;
+  $("formTitle").textContent = "Новий мод";
+  fillForm({ status: "works", checked: todayUA() });
+  setView("form");
+});
+
+$("cancelBtn").addEventListener("click", () => {
+  editingId = null;
+  setView("list");
+});
+
+$("saveBtn").addEventListener("click", saveForm);
+
+$("todayBtn").addEventListener("click", () => { $("fChecked").value = todayUA(); });
+
+$("modsList").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === "status") changeStatus(id, btn.dataset.status);
+  else if (action === "edit") {
+    const mod = mods.find(m => m.id === id);
+    if (!mod) return;
+    editingId = id;
+    $("formTitle").textContent = "Редагувати: " + mod.title;
+    fillForm(mod);
+    setView("form");
+    window.scrollTo(0,0);
+  }
+  else if (action === "delete") deleteMod(id);
+});
+
+async function boot(){
+  const token = getToken();
+  if (!token) { setView("auth"); return; }
+  try {
+    await fetchMods();
+    renderList();
+    setView("list");
+  } catch(e) {
+    toast(e.message, true);
+    clearToken();
+    setView("auth");
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
