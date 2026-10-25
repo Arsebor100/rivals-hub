@@ -91,6 +91,90 @@ button,select{font:inherit}
 @keyframes hintPulse{0%,100%{opacity:.35}50%{opacity:.75}}
 @keyframes loaderPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
 
+/* ── DEVICE TOAST (КАРТОЧКА УСТРОЙСТВА) ── */
+.device-toast {
+  position: fixed;
+  bottom: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 10000;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  transition: bottom 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.device-toast::before {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--violet), var(--violet-2));
+  border-radius: 0 0 16px 16px;
+}
+.device-toast.show {
+  bottom: 24px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.device-toast-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(196,181,253,.3);
+  border-radius: 50%; /* Круглая как аватарка */
+  display: grid;
+  place-items: center;
+  color: var(--violet-2);
+}
+.device-toast-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+.device-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+.device-toast-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-toast-sub {
+  font-size: 0.8rem;
+  color: var(--soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device-toast-close {
+  font-size: 1.5rem;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  margin-top: -8px;
+  transition: color 0.15s ease;
+}
+.device-toast-close:hover {
+  color: var(--text);
+}
+
 @media (max-width:720px){.nav{flex-wrap:wrap}.lists{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.suggest-btn{justify-content:center}.card-head{gap:12px}.thumb{width:64px;height:64px;border-radius:12px}.title-row{flex-direction:column;align-items:flex-start;gap:8px}.loader-stage{width:170px;height:170px}}
 </style>
 </head>
@@ -128,15 +212,23 @@ button,select{font:inherit}
 
 <main class="container">
   <section class="toolbar">
-    <div class="filter-tabs" id="filterTabs">
-      <!-- Тут кнопки заповнюються скриптом -->
-    </div>
+    <div class="filter-tabs" id="filterTabs"></div>
     <a class="suggest-btn" id="suggestBtn" href="mailto:arsebor100@gmail.com?subject=Rivals%20Hub%20suggestion&body=Roblox%20link%3A%0Ahttps%3A%2F%2Fwww.roblox.com%2Fgames%2F17625359962%2FRIVALS%20(example)" target="_blank" rel="noopener noreferrer">
       <span id="suggestLabel">Запропонувати мод / доповнення</span>
     </a>
   </section>
   <section id="modList" class="mod-list"></section>
 </main>
+
+<!-- КАРТОЧКА УСТРОЙСТВА -->
+<div id="deviceToast" class="device-toast">
+  <div class="device-toast-icon" id="deviceIcon"></div>
+  <div class="device-toast-content">
+    <div class="device-toast-title" id="deviceTitle">Устройство</div>
+    <div class="device-toast-sub" id="deviceSub">Загрузка...</div>
+  </div>
+  <div class="device-toast-close" id="deviceClose">×</div>
+</div>
 
 <script>
 const translations = {
@@ -164,7 +256,19 @@ function t(k){return (translations[currentLang]&&translations[currentLang][k])||
 function pick(obj){ if(!obj)return []; return obj[currentLang]||obj.uk||[]; }
 function pickStr(obj){ if(!obj)return ""; return obj[currentLang]||obj.uk||""; }
 function saveLang(lang){ try{ localStorage.setItem(LANG_KEY,lang); }catch(e){} }
-function loadSavedLang(){ try{ const s=localStorage.getItem(LANG_KEY); if(s&&translations[s])return s; }catch(e){} return "uk"; }
+
+// АВТО-ОПРЕДЕЛЕНИЕ ЯЗЫКА (УКР / РУС / АНГЛ)
+function loadSavedLang(){
+  try{ 
+    const s=localStorage.getItem(LANG_KEY); 
+    if(s&&translations[s])return s; 
+  }catch(e){}
+  
+  const sysLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+  if (sysLang.startsWith('uk')) return 'uk';
+  if (sysLang.startsWith('ru')) return 'ru';
+  return 'en'; // Все остальные на английский
+}
 
 let currentLang=loadSavedLang();
 let mods=[];
@@ -177,16 +281,12 @@ const loaderText=document.getElementById("loaderText");
 const langButtons=document.querySelectorAll(".lang-btn");
 const filterTabs=document.getElementById("filterTabs");
 
-// Функция для обновления кнопок с количеством
 function updateTabs() {
   const statuses = ["works", "broken", "deleted", "all"];
   filterTabs.innerHTML = statuses.map(st => {
     let count = 0;
-    if (st === "all") {
-      count = mods.length;
-    } else {
-      count = mods.filter(m => m.status === st).length;
-    }
+    if (st === "all") { count = mods.length; } 
+    else { count = mods.filter(m => m.status === st).length; }
     const label = t(st) + ' (' + count + ')';
     const active = (st === currentFilter) ? ' active' : '';
     return '<button class="filter-tab' + active + '" data-status="' + st + '">' + esc(label) + '</button>';
@@ -199,13 +299,11 @@ function renderMods(){
 
   modList.innerHTML=visible.map(m=>{
     const isHiddenInfo = (m.status === "broken" || m.status === "deleted");
-    
     let prosArr = [], consArr = [];
     if (!isHiddenInfo) {
       prosArr=Array.isArray(pick(m.pros))?pick(m.pros):[];
       consArr=Array.isArray(pick(m.cons))?pick(m.cons):[];
     }
-    
     const codesVal=pickStr(m.codes);
     const tagsArr=Array.isArray(m.tags)?m.tags:[];
     const pros=prosArr.map(p=>'<li>'+esc(p)+'</li>').join("");
@@ -255,7 +353,7 @@ function applyLang(){
   document.documentElement.lang=currentLang;
   
   langButtons.forEach(b=>b.classList.toggle("active",b.dataset.lang===currentLang));
-  updateTabs(); // Обновляем кнопки с количеством
+  updateTabs();
   renderMods();
 }
 
@@ -265,7 +363,7 @@ filterTabs.addEventListener("click", (e) => {
   const btn = e.target.closest(".filter-tab");
   if (!btn) return;
   currentFilter = btn.dataset.status;
-  updateTabs(); // Обновляем активный класс
+  updateTabs();
   renderMods();
 });
 
@@ -291,16 +389,110 @@ async function loadMods(){
   mods=[]; 
 }
 
+// ── DEVICE DETECTOR LOGIC ──
+function initDeviceDetector() {
+  const toast = document.getElementById('deviceToast');
+  const title = document.getElementById('deviceTitle');
+  const sub = document.getElementById('deviceSub');
+  const iconBox = document.getElementById('deviceIcon');
+  const closeBtn = document.getElementById('deviceClose');
+
+  closeBtn.addEventListener('click', () => toast.classList.remove('show'));
+
+  const ICONS = {
+    windows: `<svg viewBox="0 0 24 24"><path d="M3 5.5L10.5 4.5V11.5H3V5.5ZM3 12.5H10.5V19.5L3 18.5V12.5ZM11.5 4.3L21 3V11.5H11.5V4.3ZM11.5 12.5H21V21L11.5 19.7V12.5Z"/></svg>`,
+    android: `<svg viewBox="0 0 24 24"><path d="M6 9h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9zm2-3a4 4 0 0 1 8 0v1H8V6zm-3 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm14 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM8 21v1a1 1 0 0 1-2 0v-1H8zm10 0v1a1 1 0 0 1-2 0v-1h2z"/></svg>`,
+    ios: `<svg viewBox="0 0 24 24"><path d="M16 1c-.4 1.3-1.3 2.3-2.5 3-1.2.7-2.5.9-3.5.9-.1-1.3.3-2.7 1.2-3.8C12.1.1 13.4-.2 14.4 0c.3-.1.9-.1 1.6.1zm.5 5.5c-1.4 0-2.6.8-3.3.8-.8 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.3 2.9 2.2 1.2-.1 1.6-.8 3-.8 1.4 0 1.8.8 3 .8 1.2-.1 2-1.1 2.8-2.2.9-1.3 1.3-2.6 1.3-2.7-.1-.1-2.5-1-2.5-3.7 0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.7-3.6-1.7z"/></svg>`,
+    macos: `<svg viewBox="0 0 24 24"><path d="M18.7 10c0-2.8 2.3-4.1 2.4-4.2-1.3-1.9-3.3-2.2-4-2.2-1.7-.2-3.3 1-4.2 1-1 0-2.3-1-3.8-1-2 0-3.8 1.2-4.8 3-2 3.5-.5 8.7 1.4 11.5 1 1.4 2.1 2.9 3.6 2.9 1.5-.1 2-.9 3.8-.9 1.8 0 2.3.9 3.8.9 1.5 0 2.5-1.4 3.5-2.8 1.1-1.6 1.5-3.2 1.5-3.3-.1-.1-3.1-1.2-3.1-4.9zM15.2 1.8c.8-1 1.3-2.3 1.2-3.7-1.2.1-2.6.8-3.4 1.8-.7.8-1.3 2.1-1.1 3.4 1.3.1 2.5-.6 3.3-1.5z"/></svg>`,
+    linux: `<svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5v2.5c0 1.5-.5 2.5-1.5 3.5S4 15 4 17a5 5 0 0 0 5 5h6a5 5 0 0 0 5-5c0-2-1-3.5-2-4.5s-1.5-2-1.5-3.5V7a5 5 0 0 0-5-5zm-2 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-2 6c-1.5 0-2.5-1-2.5-1s1-.5 2.5-.5 2.5.5 2.5.5-1 1-2.5 1z"/></svg>`
+  };
+
+  function getOSInfo(platform, ua) {
+    const p = (platform || '').toLowerCase();
+    const u = (ua || '').toLowerCase();
+    if (p.includes('win') || u.includes('windows')) return { name: 'Windows', icon: 'windows' };
+    if (p.includes('android') || u.includes('android')) return { name: 'Android', icon: 'android' };
+    if (p.includes('ios') || p.includes('iphone') || u.includes('iphone') || u.includes('ipad')) return { name: 'iOS', icon: 'ios' };
+    if (p.includes('mac') || u.includes('macintosh') || u.includes('mac os')) return { name: 'macOS', icon: 'macos' };
+    if (p.includes('linux') || u.includes('linux')) return { name: 'Linux', icon: 'linux' };
+    return { name: 'Unknown OS', icon: 'linux' };
+  }
+
+  async function detect() {
+    let osName = 'Unknown OS', osIcon = 'linux', browserName = 'Browser', deviceModel = '';
+
+    if (navigator.userAgentData) {
+      try {
+        const h = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion', 'brands']);
+        deviceModel = h.model || '';
+        const info = getOSInfo(h.platform, navigator.userAgent);
+        osName = info.name + (h.platformVersion ? ' ' + h.platformVersion.split('.')[0] : '');
+        osIcon = info.icon;
+        if (h.brands && h.brands.length > 0) {
+          const br = h.brands.find(b => !b.brand.includes('Chromium') && !b.brand.includes('Not') && b.brand !== 'Google Chrome');
+          if (br) browserName = br.brand;
+          else if (navigator.userAgentData.brands.find(b => b.brand === 'Google Chrome')) browserName = 'Chrome';
+        }
+      } catch(e){}
+    }
+
+    if (osName === 'Unknown OS') {
+      const info = getOSInfo('', navigator.userAgent);
+      osName = info.name;
+      osIcon = info.icon;
+    }
+
+    if (browserName === 'Browser') {
+      const ua = navigator.userAgent;
+      if (ua.includes('Firefox/')) browserName = 'Firefox';
+      else if (ua.includes('Edg/')) browserName = 'Edge';
+      else if (ua.includes('OPR/') || ua.includes('Opera')) browserName = 'Opera';
+      else if (ua.includes('Chrome/')) browserName = 'Chrome';
+      else if (ua.includes('Safari/') && !ua.includes('Chrome')) browserName = 'Safari';
+    }
+
+    if (!deviceModel || deviceModel.toLowerCase() === 'desktop') {
+      deviceModel = osName.includes('Windows') ? 'ПК / Ноутбук' : osName.includes('Mac') ? 'Mac' : 'Пристрій';
+    }
+
+    iconBox.innerHTML = ICONS[osIcon] || ICONS.linux;
+    title.textContent = deviceModel;
+    sub.textContent = `${osName} • ${browserName}`;
+  }
+  
+  detect(); // Запускаем в фоне, но показываем карточку только после лоадера
+  
+  // Возвращаем функцию, чтобы вызвать показ после лоадера
+  return () => {
+    toast.classList.add('show'); 
+    // Больше никаких setTimeout на скрытие — висит пока не закроют
+  };
+}
+
+let showDeviceToast = null; // Сюда запишем функцию показа
+
+// ── LOADER ──
 (function runLoader(){
-  const loader=document.getElementById("loader"); if(!loader)return;
+  const loader=document.getElementById("loader"); 
+  if(!loader)return;
+  
+  showDeviceToast = initDeviceDetector();
+
   let shown=false; try{ shown=sessionStorage.getItem(LOADER_KEY)==="1"; }catch(e){}
-  if(shown){ loader.remove(); return; }
+  
+  if(shown){ 
+    loader.remove(); 
+    if (showDeviceToast) showDeviceToast(); // Сразу показываем если лоадер пропущен
+    return; 
+  }
+  
   const N=document.getElementById("logoN"), G=document.getElementById("logoG"), gameLogo=document.getElementById("gameLogo");
   const N_START_X=-170,G_START_X=170,N_MID_X=-22,G_MID_X=22,N_END_X=-180,G_END_X=180;
   const T_PAUSE=150,T_SPIRAL_DUR=1200,T_HOLD=200,T_SPLIT_DUR=550,T_LOGO_IN=450,T_LOGO_HOLD=450,T_FADE=500;
   const T_SPIRAL_START=T_PAUSE, T_SPIRAL_END=T_SPIRAL_START+T_SPIRAL_DUR, T_HOLD_END=T_SPIRAL_END+T_HOLD, T_SPLIT_END=T_HOLD_END+T_SPLIT_DUR, T_LOGO_START=T_SPLIT_END-100, T_LOGO_END=T_LOGO_START+T_LOGO_IN, T_FADE_START=T_LOGO_END+T_LOGO_HOLD, T_END=T_FADE_START+T_FADE;
   const start=performance.now(); let done=false;
   const easeOutQuint=x=>1-Math.pow(1-x,5), easeInOutSine=x=>-(Math.cos(Math.PI*x)-1)/2, easeOutCubic=x=>1-Math.pow(1-x,3), lerp=(a,b,k)=>a+(b-a)*k;
+  
   function frame(now){
     if(done)return; const e=now-start;
     if(e<T_SPIRAL_START){ N.style.opacity=0; G.style.opacity=0; }
@@ -320,12 +512,20 @@ async function loadMods(){
       N.style.opacity=1-easePos*0.7; G.style.opacity=1-easePos*0.7;
     }
     else { N.style.opacity=0; G.style.opacity=0; }
+    
     if(e<T_LOGO_START){ gameLogo.style.opacity=0; gameLogo.style.transform='scale(.35)'; }
     else if(e<T_LOGO_END){ const t01=(e-T_LOGO_START)/T_LOGO_IN, ease=easeOutCubic(t01); gameLogo.style.opacity=ease; gameLogo.style.transform='scale('+lerp(0.35,1,ease)+')'; }
     else { gameLogo.style.opacity=1; gameLogo.style.transform='scale(1)'; }
+    
     if(e>=T_FADE_START){ const t01=Math.min(1,(e-T_FADE_START)/T_FADE); loader.style.opacity=1-t01; }
+    
     if(e<T_END) requestAnimationFrame(frame);
-    else { done=true; try{ sessionStorage.setItem(LOADER_KEY,"1"); }catch(err){} loader.remove(); }
+    else { 
+      done=true; 
+      try{ sessionStorage.setItem(LOADER_KEY,"1"); }catch(err){} 
+      loader.remove(); 
+      if (showDeviceToast) showDeviceToast(); // Показываем карточку после исчезновения лоадера
+    }
   }
   requestAnimationFrame(frame);
 })();
