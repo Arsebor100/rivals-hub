@@ -60,7 +60,6 @@ button,select{font:inherit}
 .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
 
-/* Codes */
 .codes-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .code-pill{display:inline-flex;align-items:center;padding:8px 14px;border-radius:10px;background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.22);font-size:.82rem;color:#fde68a;cursor:pointer;user-select:none;transition:all .15s ease}
 .code-pill:hover{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.4)}
@@ -130,10 +129,7 @@ button,select{font:inherit}
 <main class="container">
   <section class="toolbar">
     <div class="filter-tabs" id="filterTabs">
-      <button class="filter-tab active" data-status="works">Працює</button>
-      <button class="filter-tab" data-status="broken">Не працює</button>
-      <button class="filter-tab" data-status="deleted">Видалений</button>
-      <button class="filter-tab" data-status="all">Усі</button>
+      <!-- Тут кнопки заповнюються скриптом -->
     </div>
     <a class="suggest-btn" id="suggestBtn" href="mailto:arsebor100@gmail.com?subject=Rivals%20Hub%20suggestion&body=Roblox%20link%3A%0Ahttps%3A%2F%2Fwww.roblox.com%2Fgames%2F17625359962%2FRIVALS%20(example)" target="_blank" rel="noopener noreferrer">
       <span id="suggestLabel">Запропонувати мод / доповнення</span>
@@ -172,7 +168,7 @@ function loadSavedLang(){ try{ const s=localStorage.getItem(LANG_KEY); if(s&&tra
 
 let currentLang=loadSavedLang();
 let mods=[];
-let currentFilter="works"; // За замовчуванням "Працює"
+let currentFilter="works";
 
 const brandSubtitle=document.getElementById("brandSubtitle");
 const modList=document.getElementById("modList");
@@ -180,6 +176,22 @@ const suggestLabel=document.getElementById("suggestLabel");
 const loaderText=document.getElementById("loaderText");
 const langButtons=document.querySelectorAll(".lang-btn");
 const filterTabs=document.getElementById("filterTabs");
+
+// Функция для обновления кнопок с количеством
+function updateTabs() {
+  const statuses = ["works", "broken", "deleted", "all"];
+  filterTabs.innerHTML = statuses.map(st => {
+    let count = 0;
+    if (st === "all") {
+      count = mods.length;
+    } else {
+      count = mods.filter(m => m.status === st).length;
+    }
+    const label = t(st) + ' (' + count + ')';
+    const active = (st === currentFilter) ? ' active' : '';
+    return '<button class="filter-tab' + active + '" data-status="' + st + '">' + esc(label) + '</button>';
+  }).join("");
+}
 
 function renderMods(){
   const visible=mods.filter(m=>currentFilter==="all"||m.status===currentFilter);
@@ -200,7 +212,6 @@ function renderMods(){
     const cons=consArr.map(c=>'<li>'+esc(c)+'</li>').join("");
     const tagsHtml=tagsArr.length?'<div class="tags-row">'+tagsArr.map(tg=>'<span class="tag">'+esc(tg)+'</span>').join("")+'</div>':'';
     
-    // Codes logic (через кому)
     let codesHtml = '';
     if (!isHiddenInfo && codesVal) {
       const codeList = codesVal.split(',').map(c => c.trim()).filter(Boolean);
@@ -243,11 +254,8 @@ function applyLang(){
   if(h&&!introPlayed) h.textContent=t("tapForSound");
   document.documentElement.lang=currentLang;
   
-  document.querySelectorAll(".filter-tab").forEach(b=>{
-    b.textContent=t(b.dataset.status);
-    b.classList.toggle("active", b.dataset.status === currentFilter);
-  });
   langButtons.forEach(b=>b.classList.toggle("active",b.dataset.lang===currentLang));
+  updateTabs(); // Обновляем кнопки с количеством
   renderMods();
 }
 
@@ -257,7 +265,7 @@ filterTabs.addEventListener("click", (e) => {
   const btn = e.target.closest(".filter-tab");
   if (!btn) return;
   currentFilter = btn.dataset.status;
-  document.querySelectorAll(".filter-tab").forEach(b => b.classList.toggle("active", b.dataset.status === currentFilter));
+  updateTabs(); // Обновляем активный класс
   renderMods();
 });
 
@@ -280,7 +288,7 @@ document.addEventListener("keydown",async(e)=>{
 
 async function loadMods(){
   try{ const res=await fetch("./mods.json?v="+Date.now()); if(res.ok){ mods=await res.json(); return; } }catch(e){}
-  mods=[]; // Якщо файлу немає — пустий масив
+  mods=[]; 
 }
 
 (function runLoader(){
