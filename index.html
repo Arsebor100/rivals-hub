@@ -91,7 +91,7 @@ button,select{font:inherit}
 @keyframes hintPulse{0%,100%{opacity:.35}50%{opacity:.75}}
 @keyframes loaderPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
 
-/* ── DEVICE TOAST (КАРТОЧКА УСТРОЙСТВА) ── */
+/* ── DEVICE TOAST ── */
 .device-toast {
   position: fixed;
   bottom: -150px;
@@ -132,7 +132,7 @@ button,select{font:inherit}
   flex-shrink: 0;
   background: rgba(124, 58, 237, 0.15);
   border: 1px solid rgba(196,181,253,.3);
-  border-radius: 50%; /* Круглая как аватарка */
+  border-radius: 50%;
   display: grid;
   place-items: center;
   color: var(--violet-2);
@@ -220,7 +220,6 @@ button,select{font:inherit}
   <section id="modList" class="mod-list"></section>
 </main>
 
-<!-- КАРТОЧКА УСТРОЙСТВА -->
 <div id="deviceToast" class="device-toast">
   <div class="device-toast-icon" id="deviceIcon"></div>
   <div class="device-toast-content">
@@ -257,17 +256,16 @@ function pick(obj){ if(!obj)return []; return obj[currentLang]||obj.uk||[]; }
 function pickStr(obj){ if(!obj)return ""; return obj[currentLang]||obj.uk||""; }
 function saveLang(lang){ try{ localStorage.setItem(LANG_KEY,lang); }catch(e){} }
 
-// АВТО-ОПРЕДЕЛЕНИЕ ЯЗЫКА (УКР / РУС / АНГЛ)
+// АВТО-ОПРЕДЕЛЕНИЕ ЯЗЫКА
 function loadSavedLang(){
   try{ 
     const s=localStorage.getItem(LANG_KEY); 
     if(s&&translations[s])return s; 
   }catch(e){}
-  
   const sysLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
   if (sysLang.startsWith('uk')) return 'uk';
   if (sysLang.startsWith('ru')) return 'ru';
-  return 'en'; // Все остальные на английский
+  return 'en';
 }
 
 let currentLang=loadSavedLang();
@@ -284,9 +282,7 @@ const filterTabs=document.getElementById("filterTabs");
 function updateTabs() {
   const statuses = ["works", "broken", "deleted", "all"];
   filterTabs.innerHTML = statuses.map(st => {
-    let count = 0;
-    if (st === "all") { count = mods.length; } 
-    else { count = mods.filter(m => m.status === st).length; }
+    let count = (st === "all") ? mods.length : mods.filter(m => m.status === st).length;
     const label = t(st) + ' (' + count + ')';
     const active = (st === currentFilter) ? ' active' : '';
     return '<button class="filter-tab' + active + '" data-status="' + st + '">' + esc(label) + '</button>';
@@ -389,7 +385,7 @@ async function loadMods(){
   mods=[]; 
 }
 
-// ── DEVICE DETECTOR LOGIC ──
+// ── DEVICE DETECTOR ──
 function initDeviceDetector() {
   const toast = document.getElementById('deviceToast');
   const title = document.getElementById('deviceTitle');
@@ -425,20 +421,21 @@ function initDeviceDetector() {
       try {
         const h = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion', 'brands']);
         deviceModel = h.model || '';
-const info = getOSInfo(h.platform, navigator.userAgent);
-let versionStr = '';
-if (info.name === 'Windows') {
-  // У винды версия 13+ или 10.0.0 (это на самом деле Windows 11)
-  if (h.platformVersion && (h.platformVersion.startsWith('13') || h.platformVersion.startsWith('14') || h.platformVersion.startsWith('10.0.0'))) {
-    versionStr = ' 11';
-  } else {
-    versionStr = ' 10';
-  }
-} else if (h.platformVersion) {
-  versionStr = ' ' + h.platformVersion.split('.')[0];
-}
-osName = info.name + versionStr;
+        const info = getOSInfo(h.platform, navigator.userAgent);
+        
+        let versionStr = '';
+        if (info.name === 'Windows') {
+          if (h.platformVersion && (h.platformVersion.startsWith('13') || h.platformVersion.startsWith('14') || h.platformVersion.startsWith('10.0.0'))) {
+            versionStr = ' 11';
+          } else {
+            versionStr = ' 10';
+          }
+        } else if (h.platformVersion) {
+          versionStr = ' ' + h.platformVersion.split('.')[0];
+        }
+        osName = info.name + versionStr;
         osIcon = info.icon;
+
         if (h.brands && h.brands.length > 0) {
           const br = h.brands.find(b => !b.brand.includes('Chromium') && !b.brand.includes('Not') && b.brand !== 'Google Chrome');
           if (br) browserName = br.brand;
@@ -471,16 +468,14 @@ osName = info.name + versionStr;
     sub.textContent = `${osName} • ${browserName}`;
   }
   
-  detect(); // Запускаем в фоне, но показываем карточку только после лоадера
+  detect();
   
-  // Возвращаем функцию, чтобы вызвать показ после лоадера
   return () => {
-    toast.classList.add('show'); 
-    // Больше никаких setTimeout на скрытие — висит пока не закроют
+    toast.classList.add('show');
   };
 }
 
-let showDeviceToast = null; // Сюда запишем функцию показа
+let showDeviceToast = null;
 
 // ── LOADER ──
 (function runLoader(){
@@ -493,7 +488,7 @@ let showDeviceToast = null; // Сюда запишем функцию показ
   
   if(shown){ 
     loader.remove(); 
-    if (showDeviceToast) showDeviceToast(); // Сразу показываем если лоадер пропущен
+    if (showDeviceToast) showDeviceToast(); 
     return; 
   }
   
@@ -535,7 +530,7 @@ let showDeviceToast = null; // Сюда запишем функцию показ
       done=true; 
       try{ sessionStorage.setItem(LOADER_KEY,"1"); }catch(err){} 
       loader.remove(); 
-      if (showDeviceToast) showDeviceToast(); // Показываем карточку после исчезновения лоадера
+      if (showDeviceToast) showDeviceToast(); 
     }
   }
   requestAnimationFrame(frame);
