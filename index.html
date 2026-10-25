@@ -18,32 +18,15 @@
   ЛОАДЕР — точна реконструкція _SpiralAnimation + SplitLogo з LoadingScreen.rbxmx:
     1. 150ms пауза.
     2. SPIRAL (150-1350ms): дві Arseniy_Borisenko.png зліва та справа
-       летять до центру. Позиція — Out Quint (як TweenPosition у оригіналі).
-       Обертання — за формулою з _SpiralAnimation:
-         v41 = (sqrt(1-(p/100-1)^2)*540+180) % 360
-         rotation = -v41  (обидві в одну сторону)
-       Тобто 180°→0° за фазу (на пів-оберту).
+       летять до центру. Позиція — Out Quint.
+       Обертання — (sqrt(1-(p/100-1)^2)*540+180) % 360, обидві в одну сторону.
     3. HOLD (1350-1550ms): стоять по центру з невеликим зазором.
-    4. SPLIT (1550-2100ms): розлітаються.
-       Позиція — InOut Sine (як у SplitLogo).
-       Обертання з оригіналу:
-         v10 = (720 * t^2) % 360
-         N.rotation = -v10 (проти годинникової)
-         G.rotation = +v10 (за годинниковою)
+    4. SPLIT (1550-2100ms): розлітаються. InOut Sine.
+       Обертання: N = -(720*t^2)%360, G = +(720*t^2)%360.
     5. GAMELOGO (2000-2450ms): Untitled6.png scale-in 0.35→1.
     6. HOLD LOGO (2450-2900ms).
     7. FADE (2900-3400ms): плавно зникає.
     Один раз за сесію ("rivalsHubLoaded").
-
-  ЗВУК:
-    Браузери блокують autoplay без user gesture (політика Chrome/Safari).
-    Тригери: pointerdown, mousemove, scroll, keydown, touchstart, click.
-    На ПК mousemove часто спрацьовує одразу при русі миші.
-    Якщо 600мс тихо — внизу лоадера з'являється hint "торкнись для звуку".
-
-  КОПІЮВАННЯ КОДУ:
-    - Клік по .codes-row копіює частину ДО " — " (тільки код).
-    - Показує "Скопійовано!" на 1.2с.
 
   ЖОРСТКІ ПРАВИЛА:
   1. НЕ переробляй дизайн під себе.
@@ -298,7 +281,7 @@ const mods = [
   {
     id: "a-rivals",
     title: "a",
-    status: "works",
+    status: "broken", // Змінено на "broken", бо гра недоступна
     placeUrl: "https://www.roblox.com/games/96885652495783/a",
     creator: "trev",
     creatorUrl: "https://www.roblox.com/users/1422380479/profile",
@@ -308,12 +291,16 @@ const mods = [
     groupAvatar: "https://tr.rbxcdn.com/180DAY-c505e9ee815eca2d7872018c5dace142/150/150/Image/Webp/noFilter",
     discordUrl: "https://discord.gg/ejeXS2JfVE",
     discordIcon: "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
-    checked: "24.10.2026",
+    checked: "25.10.2026",
     tags: ["rauls", "banana"],
     codes: { uk: "FREEBUX — 2к монет", ru: "FREEBUX — 2к монет", en: "FREEBUX — 2k coins" },
     image: "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
     pros: { uk: [], ru: [], en: [] },
-    cons: { uk: [], ru: [], en: [] }
+    cons: {
+      uk: ["Гра стала недоступною (не видалена)"],
+      ru: ["Игра стала недоступной (не удалена)"],
+      en: ["Game became inaccessible (not deleted)"]
+    }
   },
   {
     id: "josh-rivals-modded",
@@ -602,8 +589,6 @@ document.addEventListener("keydown", async (e) => {
   const G = document.getElementById("logoG");
   const gameLogo = document.getElementById("gameLogo");
 
-  // Позиції у % від ширини stage (translateX %).
-  // Початок — за межами екрана (обидві картинки Arseniy_Borisenko).
   const N_START_X = -170;
   const G_START_X =  170;
   const N_MID_X   =  -22;
@@ -611,23 +596,22 @@ document.addEventListener("keydown", async (e) => {
   const N_END_X   = -180;
   const G_END_X   =  180;
 
-  // Таймлайн
   const T_PAUSE       = 150;
-  const T_SPIRAL_DUR  = 1200;   // _SpiralAnimation
+  const T_SPIRAL_DUR  = 1200;
   const T_HOLD        = 200;
-  const T_SPLIT_DUR   = 550;    // SplitLogo
+  const T_SPLIT_DUR   = 550;
   const T_LOGO_IN     = 450;
   const T_LOGO_HOLD   = 450;
   const T_FADE        = 500;
 
   const T_SPIRAL_START = T_PAUSE;
-  const T_SPIRAL_END   = T_SPIRAL_START + T_SPIRAL_DUR;   // 1350
-  const T_HOLD_END     = T_SPIRAL_END + T_HOLD;           // 1550
-  const T_SPLIT_END    = T_HOLD_END + T_SPLIT_DUR;        // 2100
-  const T_LOGO_START   = T_SPLIT_END - 100;               // 2000
-  const T_LOGO_END     = T_LOGO_START + T_LOGO_IN;        // 2450
-  const T_FADE_START   = T_LOGO_END + T_LOGO_HOLD;        // 2900
-  const T_END          = T_FADE_START + T_FADE;           // 3400
+  const T_SPIRAL_END   = T_SPIRAL_START + T_SPIRAL_DUR;
+  const T_HOLD_END     = T_SPIRAL_END + T_HOLD;
+  const T_SPLIT_END    = T_HOLD_END + T_SPLIT_DUR;
+  const T_LOGO_START   = T_SPLIT_END - 100;
+  const T_LOGO_END     = T_LOGO_START + T_LOGO_IN;
+  const T_FADE_START   = T_LOGO_END + T_LOGO_HOLD;
+  const T_END          = T_FADE_START + T_FADE;
 
   const start = performance.now();
   let done = false;
@@ -641,7 +625,6 @@ document.addEventListener("keydown", async (e) => {
     if (done) return;
     const e = now - start;
 
-    // ── Фаза 1: SpiralAnimation ──
     if (e < T_SPIRAL_START) {
       N.style.opacity = 0;
       G.style.opacity = 0;
@@ -649,13 +632,9 @@ document.addEventListener("keydown", async (e) => {
       const t01 = (e - T_SPIRAL_START) / T_SPIRAL_DUR;
       const easePos = easeOutQuint(t01);
 
-      // Позиція: Out Quint (як TweenPosition)
       const nx = lerp(N_START_X, N_MID_X, easePos);
       const gx = lerp(G_START_X, G_MID_X, easePos);
 
-      // Обертання з _SpiralAnimation:
-      // v41 = (sqrt(1 - (p/100 - 1)^2) * 540 + 180) % 360
-      // Rotation = -v41 (обидві в одну сторону)
       const p = t01 * 100;
       const rad = Math.sqrt(Math.max(0, 1 - Math.pow(p/100 - 1, 2)));
       const v41 = (rad * 540 + 180) % 360;
@@ -666,14 +645,12 @@ document.addEventListener("keydown", async (e) => {
       N.style.opacity = Math.min(1, t01 * 2.5);
       G.style.opacity = Math.min(1, t01 * 2.5);
     }
-    // ── Фаза 2: HOLD (стоять в центрі) ──
     else if (e < T_HOLD_END) {
       N.style.transform = 'translateX(' + N_MID_X + '%) rotate(0deg)';
       G.style.transform = 'translateX(' + G_MID_X + '%) rotate(0deg)';
       N.style.opacity = 1;
       G.style.opacity = 1;
     }
-    // ── Фаза 3: SplitLogo ──
     else if (e < T_SPLIT_END) {
       const t01 = (e - T_HOLD_END) / T_SPLIT_DUR;
       const easePos = easeInOutSine(t01);
@@ -681,9 +658,6 @@ document.addEventListener("keydown", async (e) => {
       const nx = lerp(N_MID_X, N_END_X, easePos);
       const gx = lerp(G_MID_X, G_END_X, easePos);
 
-      // Обертання з SplitLogo:
-      // v10 = (720 * (t^2)) % 360
-      // N = -v10, G = +v10
       const v10 = (720 * t01 * t01) % 360;
       const rotN = -v10;
       const rotG =  v10;
@@ -693,13 +667,11 @@ document.addEventListener("keydown", async (e) => {
       N.style.opacity = 1 - easePos * 0.7;
       G.style.opacity = 1 - easePos * 0.7;
     }
-    // ── Після Split ──
     else {
       N.style.opacity = 0;
       G.style.opacity = 0;
     }
 
-    // ── GameLogo ──
     if (e < T_LOGO_START) {
       gameLogo.style.opacity = 0;
       gameLogo.style.transform = 'scale(.35)';
@@ -713,7 +685,6 @@ document.addEventListener("keydown", async (e) => {
       gameLogo.style.transform = 'scale(1)';
     }
 
-    // ── Fade ──
     if (e >= T_FADE_START) {
       const t01 = Math.min(1, (e - T_FADE_START) / T_FADE);
       loader.style.opacity = 1 - t01;
