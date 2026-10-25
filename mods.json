@@ -13,28 +13,70 @@
     "discordUrl": "https://discord.gg/ejeXS2JfVE",
     "discordIcon": "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
     "checked": "25.10.2026",
-    "tags": ["rauls", "banana"],
-    "codes": { "uk": "FREEBUX — 2к монет", "ru": "FREEBUX — 2к монет", "en": "FREEBUX — 2k coins" },
+    "tags": [
+      "rauls",
+      "banana"
+    ],
+    "codes": {
+      "uk": "FREEBUX — 2к монет",
+      "ru": "FREEBUX — 2к монет",
+      "en": "FREEBUX — 2k coins"
+    },
     "image": "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
-    "pros": { "uk": [], "ru": [], "en": [] },
-    "cons": { "uk": ["Гра стала недоступною (не видалена)"], "ru": ["Игра стала недоступной (не удалена)"], "en": ["Game became inaccessible (not deleted)"] }
+    "pros": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    },
+    "cons": {
+      "uk": [
+        "Гра стала недоступною (не видалена)"
+      ],
+      "ru": [
+        "Игра стала недоступной (не удалена)"
+      ],
+      "en": [
+        "Game became inaccessible (not deleted)"
+      ]
+    }
   },
   {
     "id": "josh-rivals-modded",
     "title": "Josh's RIVALS MODDED",
-    "status": "works",
+    "status": "broken",
     "placeUrl": "https://www.roblox.com/games/94069113295113/Joshs-RIVALS-MODDED",
     "creator": "Ixspan7039",
     "creatorUrl": "https://www.roblox.com/users/10797552845/profile",
     "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    "checked": "24.10.2026",
-    "tags": ["modded shop"],
+    "checked": "25.10.2026",
+    "tags": [
+      "modded shop"
+    ],
     "image": "https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
-    "pros": { "uk": [], "ru": [], "en": [] },
+    "pros": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    },
     "cons": {
-      "uk": ["Платна адмін-панель", "Сміттєві адмін-гармати та скіни за робукси", "Немає ранкед-шопу та інспектів", "Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
-      "ru": ["Платная админ-панель", "Мусорные админ-пушки и скины за робуксы", "Нет ранкед-шопа и инспектов", "Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
-      "en": ["Paid admin panel", "Junk admin guns and skins for Robux", "No ranked shop or inspects", "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
+      "uk": [
+        "Платна адмін-панель",
+        "Сміттєві адмін-гармати та скіни за робукси",
+        "Немає ранкед-шопу та інспектів",
+        "Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"
+      ],
+      "ru": [
+        "Платная админ-панель",
+        "Мусорные админ-пушки и скины за робуксы",
+        "Нет ранкед-шопа и инспектов",
+        "Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"
+      ],
+      "en": [
+        "Paid admin panel",
+        "Junk admin guns and skins for Robux",
+        "No ranked shop or inspects",
+        "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"
+      ]
     }
   }
 ]
