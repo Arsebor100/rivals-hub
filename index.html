@@ -425,8 +425,19 @@ function initDeviceDetector() {
       try {
         const h = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion', 'brands']);
         deviceModel = h.model || '';
-        const info = getOSInfo(h.platform, navigator.userAgent);
-        osName = info.name + (h.platformVersion ? ' ' + h.platformVersion.split('.')[0] : '');
+const info = getOSInfo(h.platform, navigator.userAgent);
+let versionStr = '';
+if (info.name === 'Windows') {
+  // У винды версия 13+ или 10.0.0 (это на самом деле Windows 11)
+  if (h.platformVersion && (h.platformVersion.startsWith('13') || h.platformVersion.startsWith('14') || h.platformVersion.startsWith('10.0.0'))) {
+    versionStr = ' 11';
+  } else {
+    versionStr = ' 10';
+  }
+} else if (h.platformVersion) {
+  versionStr = ' ' + h.platformVersion.split('.')[0];
+}
+osName = info.name + versionStr;
         osIcon = info.icon;
         if (h.brands && h.brands.length > 0) {
           const br = h.brands.find(b => !b.brand.includes('Chromium') && !b.brand.includes('Not') && b.brand !== 'Google Chrome');
