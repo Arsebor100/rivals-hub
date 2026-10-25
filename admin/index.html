@@ -62,7 +62,6 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
   </div>
   <p class="hint">Токен зберігається тільки у цьому браузері. Зміни летять у GitHub автоматично.</p>
 
-  <!-- AUTH -->
   <div class="panel" id="authView">
     <h2>GitHub токен</h2>
     <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off" spellcheck="false" />
@@ -72,7 +71,6 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
     </div>
   </div>
 
-  <!-- LIST -->
   <div id="listView" style="display:none">
     <div class="panel">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -83,7 +81,6 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
     <div id="modsList"></div>
   </div>
 
-  <!-- FORM -->
   <div id="formView" style="display:none">
     <div class="panel">
       <h2 id="formTitle">Новий мод</h2>
@@ -168,7 +165,6 @@ let mods = [];
 let editingId = null;
 let sha = null;
 
-// Базовые моды, если mods.json вообще пустой или его нет
 const INITIAL_MODS = [
   { id:"a-rivals", title:"a", status:"broken",
     placeUrl:"https://www.roblox.com/games/96885652495783/a",
@@ -178,7 +174,7 @@ const INITIAL_MODS = [
     groupAvatar:"https://tr.rbxcdn.com/180DAY-c505e9ee815eca2d7872018c5dace142/150/150/Image/Webp/noFilter",
     discordUrl:"https://discord.gg/ejeXS2JfVE",
     discordIcon:"https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
-    checked:"25.10.2026", tags:["rauls","banana"],
+    checked:"25.10.2026 22:00 (ua)", tags:["rauls","banana"],
     codes:{uk:"FREEBUX, 2K",ru:"FREEBUX, 2K",en:"FREEBUX, 2K"},
     image:"https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
     pros:{uk:[],ru:[],en:[]},
@@ -211,10 +207,17 @@ function getToken(){ try { return localStorage.getItem(TOKEN_KEY); } catch(e){ r
 function setToken(v){ try { localStorage.setItem(TOKEN_KEY, v); } catch(e){} }
 function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch(e){} }
 
+// ОБНОВЛЕННАЯ ФУНКЦИЯ ВРЕМЕНИ
 function todayUA(){
   const d = new Date();
-  return String(d.getDate()).padStart(2,"0") + "." + String(d.getMonth()+1).padStart(2,"0") + "." + d.getFullYear();
+  const dd = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const min = String(d.getMinutes()).padStart(2,"0");
+  return `${dd}.${mm}.${yyyy} ${hh}:${min} (ua)`;
 }
+
 function b64Enc(str){ return btoa(unescape(encodeURIComponent(str))); }
 function b64Dec(b64){ return decodeURIComponent(escape(atob(b64.replace(/\s/g,"")))); }
 
