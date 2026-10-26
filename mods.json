@@ -42,7 +42,7 @@
     "creator": "Ixspan7039",
     "creatorUrl": "https://www.roblox.com/users/10797552845/profile",
     "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    "checked": "26.10.2026 17:08 (ua)",
+    "checked": "26.10.2026 19:15 (ua)",
     "tags": [
       "modded shop"
     ],
@@ -57,19 +57,22 @@
         "Платна адмін-панель",
         "Сміттєві адмін-гармати та скіни за робукси",
         "Немає ранкед-шопу та інспектів",
-        "Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"
+        "Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше",
+        "Платна приватка"
       ],
       "ru": [
         "Платная админ-панель",
         "Мусорные админ-пушки и скины за робуксы",
         "Нет ранкед-шопа и инспектов",
-        "Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"
+        "Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее",
+        "Платная приватка"
       ],
       "en": [
         "Paid admin panel",
         "Junk admin guns and skins for Robux",
         "No ranked shop or inspects",
-        "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"
+        "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more",
+        "Paid private server"
       ]
     }
   },
