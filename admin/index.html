@@ -45,8 +45,10 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
 .badge-works{background:rgba(34,197,94,.12);color:#86efac}
 .badge-broken{background:rgba(239,68,68,.12);color:#fca5a5}
 .badge-deleted{background:rgba(100,116,139,.12);color:#cbd5e1}
-.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .row-actions .btn{padding:5px 10px;font-size:.72rem}
+.btn-order{background:rgba(148,163,184,.1);border-color:transparent;color:#e2e8f0;padding:5px 8px !important;}
+.btn-order:hover{background:rgba(148,163,184,.2)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,23,42,.95);border:1px solid rgba(196,181,253,.4);color:#e2e8f0;padding:12px 20px;border-radius:12px;font-size:.85rem;opacity:0;transition:all .3s ease;pointer-events:none;z-index:1000;backdrop-filter:blur(10px);max-width:90%}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{border-color:rgba(239,68,68,.5);color:#fca5a5}
@@ -100,7 +102,7 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
       <label><span>Посилання на гру *</span><input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." /></label>
       <label><span>Логотип гри (URL, необов'язково)</span><input id="fImage" placeholder="https://tr.rbxcdn.com/... або залиш пустим" /></label>
       <label><span>Дата перевірки (ДД.ММ.РРРР)</span>
-        <div style="display:flex;gap:8px"><input id="fChecked" placeholder="25.10.2026" style="flex:1" /><button class="btn btn-ghost" id="todayBtn" type="button">Сьогодні</button></div>
+        <div style="display:flex;gap:8px"><input id="fChecked" placeholder="25.10.2026 22:00 (ua)" style="flex:1" /><button class="btn btn-ghost" id="todayBtn" type="button">Сьогодні</button></div>
       </label>
 
       <div class="section-title">Автор</div>
@@ -165,36 +167,6 @@ let mods = [];
 let editingId = null;
 let sha = null;
 
-const INITIAL_MODS = [
-  { id:"a-rivals", title:"a", status:"broken",
-    placeUrl:"https://www.roblox.com/games/96885652495783/a",
-    creator:"trev", creatorUrl:"https://www.roblox.com/users/1422380479/profile",
-    creatorAvatar:"https://tr.rbxcdn.com/30DAY-AvatarHeadshot-824E206DFE3A66D06256374B6A4449F6-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    group:"Yea ofc", groupUrl:"https://www.roblox.com/communities/529875523/Yea-ofc",
-    groupAvatar:"https://tr.rbxcdn.com/180DAY-c505e9ee815eca2d7872018c5dace142/150/150/Image/Webp/noFilter",
-    discordUrl:"https://discord.gg/ejeXS2JfVE",
-    discordIcon:"https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHM0OYfiFeMI2p9MWie0CvL99U4GA1gf6_kayTt_kBblFwHwo8BW8JXlqfnYxKPmmBevsdZpJiIhrXJKvOSYipsYbqdUBBn6r6Hb.keWYwuyu5QJ84NCtr5ij3JMrlPglnBeeDch3kJBTCQneZnfl9dA-&format=source",
-    checked:"25.10.2026 22:00 (ua)", tags:["rauls","banana"],
-    codes:{uk:"FREEBUX, 2K",ru:"FREEBUX, 2K",en:"FREEBUX, 2K"},
-    image:"https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
-    pros:{uk:[],ru:[],en:[]},
-    cons:{uk:["Гра стала недоступною (не видалена)"],ru:["Игра стала недоступной (не удалена)"],en:["Game became inaccessible (not deleted)"]}
-  },
-  { id:"josh-rivals-modded", title:"Josh's RIVALS MODDED", status:"works",
-    placeUrl:"https://www.roblox.com/games/94069113295113/Joshs-RIVALS-MODDED",
-    creator:"Ixspan7039", creatorUrl:"https://www.roblox.com/users/10797552845/profile",
-    checked:"24.10.2026", tags:["modded shop"],
-    image:"https://tr.rbxcdn.com/180DAY-26de3a6f3be928df6691f27dc32575c9/256/256/GameIcon4/Webp/noFilter",
-    creatorAvatar:"https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A634EA479C0501425C858A8C082E9D09-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    pros:{uk:[],ru:[],en:[]},
-    cons:{
-      uk:["Платна адмін-панель","Сміттєві адмін-гармати та скіни за робукси","Немає ранкед-шопу та інспектів","Закрито багато контенту: скіни ранкед-шопу, кей-скіни (окрім тих, що є в шопі), арч-скіни, кристал-скіни, секретні предмети, інше"],
-      ru:["Платная админ-панель","Мусорные админ-пушки и скины за робуксы","Нет ранкед-шопа и инспектов","Закрыто много контента: скины ранкед-шопа, кей-скины (кроме тех, что есть в шопе), арч-скины, кристалл-скины, секретные предметы, прочее"],
-      en:["Paid admin panel","Junk admin guns and skins for Robux","No ranked shop or inspects","Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more"]
-    }
-  }
-];
-
 function toast(msg, isErr){
   const el = $("toast");
   el.textContent = msg;
@@ -207,7 +179,6 @@ function getToken(){ try { return localStorage.getItem(TOKEN_KEY); } catch(e){ r
 function setToken(v){ try { localStorage.setItem(TOKEN_KEY, v); } catch(e){} }
 function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch(e){} }
 
-// ОБНОВЛЕННАЯ ФУНКЦИЯ ВРЕМЕНИ
 function todayUA(){
   const d = new Date();
   const dd = String(d.getDate()).padStart(2,"0");
@@ -251,8 +222,7 @@ async function fetchMods(){
   });
   if (res.status === 404) {
     sha = null;
-    mods = JSON.parse(JSON.stringify(INITIAL_MODS));
-    toast("mods.json ще нема — перше збереження створить його з базовими модами");
+    mods = [];
     return;
   }
   if (res.status === 401) { clearToken(); throw new Error("Токен невалідний"); }
@@ -292,13 +262,23 @@ function renderList(){
     list.innerHTML = '<div class="panel"><p class="hint" style="margin:0">Поки порожньо. Натисни «Додати новий мод».</p></div>';
     return;
   }
-  list.innerHTML = mods.map(m => {
+  
+  list.innerHTML = mods.map((m, i) => {
+    const isFirst = i === 0;
+    const isLast = i === mods.length - 1;
+    
     const mkBtn = st => '<button class="btn btn-ghost" data-action="status" data-id="'+m.id+'" data-status="'+st+'" '+(m.status===st?'disabled':'')+'>'+statusLabel(st)+'</button>';
+    
     return '<div class="panel" style="padding:14px">'
       + '<div class="mod-row" style="border:none;background:transparent;padding:0;margin-bottom:12px">'
       +   '<div class="info"><div class="name">'+m.title+'</div><div class="meta">'+m.id+' · <span class="badge badge-'+m.status+'">'+statusLabel(m.status)+'</span></div></div>'
       + '</div>'
       + '<div class="row-actions">'
+      // Кнопки перемещения
+      +   '<button class="btn btn-order" data-action="move-up" data-index="'+i+'" '+(isFirst?'disabled':'')+' title="Вверх">⬆️</button>'
+      +   '<button class="btn btn-order" data-action="move-down" data-index="'+i+'" '+(isLast?'disabled':'')+' title="Вниз">⬇️</button>'
+      +   '<span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>'
+      // Статусы и редактирование
       +   mkBtn("works") + mkBtn("broken") + mkBtn("deleted")
       +   '<span style="flex:1"></span>'
       +   '<button class="btn btn-ghost" data-action="edit" data-id="'+m.id+'">✏️ Редагувати</button>'
@@ -474,6 +454,32 @@ async function deleteMod(id){
   }
 }
 
+// ── НОВАЯ ФУНКЦИЯ ДЛЯ СМЕНЫ ПОРЯДКА ──
+async function moveMod(index, direction) {
+  const newIndex = direction === 'up' ? index - 1 : index + 1;
+  if (newIndex < 0 || newIndex >= mods.length) return;
+
+  // Меняем местами в массиве
+  [mods[index], mods[newIndex]] = [mods[newIndex], mods[index]];
+
+  // Визуально обновляем сразу, чтобы было плавно
+  renderList();
+  
+  // Блокируем кнопки на время сохранения (визуально через прозрачность)
+  const allBtns = document.querySelectorAll('.btn-order');
+  allBtns.forEach(b => b.disabled = true);
+
+  try {
+    await commitMods("Reorder: move mod " + direction);
+    toast("Порядок збережено");
+  } catch(e) {
+    toast("Помилка збереження: " + e.message, true);
+    // Откат в случае ошибки
+    [mods[newIndex], mods[index]] = [mods[index], mods[newIndex]];
+    renderList();
+  }
+}
+
 $("saveTokenBtn").addEventListener("click", async () => {
   const token = $("tokenInput").value.trim();
   if (!token) { toast("Введи токен", true); return; }
@@ -513,19 +519,28 @@ $("todayBtn").addEventListener("click", () => { $("fChecked").value = todayUA();
 $("modsList").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-action]");
   if (!btn) return;
+  
   const action = btn.dataset.action;
-  const id = btn.dataset.id;
-  if (action === "status") changeStatus(id, btn.dataset.status);
+  
+  if (action === "status") {
+    changeStatus(btn.dataset.id, btn.dataset.status);
+  } 
+  else if (action === "move-up" || action === "move-down") {
+    const idx = parseInt(btn.dataset.index, 10);
+    moveMod(idx, action === "move-up" ? "up" : "down");
+  }
   else if (action === "edit") {
-    const mod = mods.find(m => m.id === id);
+    const mod = mods.find(m => m.id === btn.dataset.id);
     if (!mod) return;
-    editingId = id;
+    editingId = btn.dataset.id;
     $("formTitle").textContent = "Редагувати: " + mod.title;
     fillForm(mod);
     setView("form");
     window.scrollTo(0,0);
   }
-  else if (action === "delete") deleteMod(id);
+  else if (action === "delete") {
+    deleteMod(btn.dataset.id);
+  }
 });
 
 async function boot(){
