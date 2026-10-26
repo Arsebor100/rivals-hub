@@ -150,17 +150,17 @@ button,select{font:inherit}
 <div id="deviceToast" class="device-toast">
   <div class="device-toast-icon" id="deviceIcon"></div>
   <div class="device-toast-content">
-    <div class="device-toast-title" id="deviceTitle">Устройство</div>
-    <div class="device-toast-sub" id="deviceSub">Загрузка...</div>
+    <div class="device-toast-title" id="deviceTitle"></div>
+    <div class="device-toast-sub" id="deviceSub"></div>
   </div>
   <div class="device-toast-close" id="deviceClose">×</div>
 </div>
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів",status:"Статус",all:"Усі",works:"Працює",broken:"Не працює",deleted:"Видалений",checked:"Перевірено",pros:"Плюси",cons:"Мінуси",codes:"Коди",empty:"Нічого не знайдено",emptyHint:"Спробуй інший статус.",suggest:"Запропонувати мод / доповнення",loading:"Завантаження…",copied:"Скопійовано!",tapForSound:"торкнись для звуку 🔊" },
-  ru: { subtitle:"Каталог и статус проектов",status:"Статус",all:"Все",works:"Работает",broken:"Не работает",deleted:"Удалён",checked:"Проверено",pros:"Плюсы",cons:"Минусы",codes:"Коды",empty:"Ничего не найдено",emptyHint:"Попробуй другой статус.",suggest:"Предложить мод / дополнение",loading:"Загрузка…",copied:"Скопировано!",tapForSound:"коснись для звука 🔊" },
-  en: { subtitle:"Catalog & status tracker",status:"Status",all:"All",works:"Works",broken:"Broken",deleted:"Deleted",checked:"Checked",pros:"Pros",cons:"Cons",codes:"Codes",empty:"No entries found",emptyHint:"Try another status.",suggest:"Suggest a mod / addition",loading:"Loading…",copied:"Copied!",tapForSound:"tap for sound 🔊" }
+  uk: { subtitle:"Каталог і статус проєктів",status:"Статус",all:"Усі",works:"Працює",broken:"Не працює",deleted:"Видалений",checked:"Перевірено",pros:"Плюси",cons:"Мінуси",codes:"Коди",empty:"Нічого не знайдено",emptyHint:"Спробуй інший статус.",suggest:"Запропонувати мод / доповнення",loading:"Завантаження…",copied:"Скопійовано!",tapForSound:"торкнись для звуку 🔊", pcLaptop:"ПК / Ноутбук", device:"Пристрій", unknownOS:"Невідома ОС", browser:"Браузер" },
+  ru: { subtitle:"Каталог и статус проектов",status:"Статус",all:"Все",works:"Работает",broken:"Не работает",deleted:"Удалён",checked:"Проверено",pros:"Плюсы",cons:"Минусы",codes:"Коды",empty:"Ничего не найдено",emptyHint:"Попробуй другой статус.",suggest:"Предложить мод / дополнение",loading:"Загрузка…",copied:"Скопировано!",tapForSound:"коснись для звука 🔊", pcLaptop:"ПК / Ноутбук", device:"Устройство", unknownOS:"Неизвестная ОС", browser:"Браузер" },
+  en: { subtitle:"Catalog & status tracker",status:"Status",all:"All",works:"Works",broken:"Broken",deleted:"Deleted",checked:"Checked",pros:"Pros",cons:"Cons",codes:"Codes",empty:"No entries found",emptyHint:"Try another status.",suggest:"Suggest a mod / addition",loading:"Loading…",copied:"Copied!",tapForSound:"tap for sound 🔊", pcLaptop:"PC / Laptop", device:"Device", unknownOS:"Unknown OS", browser:"Browser" }
 };
 
 const LANG_KEY="rivalsHubLang", LOADER_KEY="rivalsHubLoaded";
@@ -197,6 +197,14 @@ function loadSavedLang(){
 let currentLang=loadSavedLang();
 let mods=[];
 let currentFilter="works";
+
+// Данные устройства (сохраняются тут, чтобы переводить при смене языка)
+let deviceData = {
+  model: '',
+  os: '',
+  icon: 'linux',
+  browser: ''
+};
 
 const brandSubtitle=document.getElementById("brandSubtitle");
 const modList=document.getElementById("modList");
@@ -266,6 +274,38 @@ function renderMods(){
   }).join("");
 }
 
+function renderDeviceInfo() {
+  const title = document.getElementById('deviceTitle');
+  const sub = document.getElementById('deviceSub');
+  const iconBox = document.getElementById('deviceIcon');
+  if (!title || !sub || !iconBox) return;
+
+  const ICONS = {
+    windows: `<svg viewBox="0 0 24 24"><path d="M3 5.5L10.5 4.5V11.5H3V5.5ZM3 12.5H10.5V19.5L3 18.5V12.5ZM11.5 4.3L21 3V11.5H11.5V4.3ZM11.5 12.5H21V21L11.5 19.7V12.5Z"/></svg>`,
+    android: `<svg viewBox="0 0 24 24"><path d="M6 9h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9zm2-3a4 4 0 0 1 8 0v1H8V6zm-3 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm14 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM8 21v1a1 1 0 0 1-2 0v-1H8zm10 0v1a1 1 0 0 1-2 0v-1h2z"/></svg>`,
+    ios: `<svg viewBox="0 0 24 24"><path d="M16 1c-.4 1.3-1.3 2.3-2.5 3-1.2.7-2.5.9-3.5.9-.1-1.3.3-2.7 1.2-3.8C12.1.1 13.4-.2 14.4 0c.3-.1.9-.1 1.6.1zm.5 5.5c-1.4 0-2.6.8-3.3.8-.8 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.3 2.9 2.2 1.2-.1 1.6-.8 3-.8 1.4 0 1.8.8 3 .8 1.2-.1 2-1.1 2.8-2.2.9-1.3 1.3-2.6 1.3-2.7-.1-.1-2.5-1-2.5-3.7 0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.7-3.6-1.7z"/></svg>`,
+    macos: `<svg viewBox="0 0 24 24"><path d="M18.7 10c0-2.8 2.3-4.1 2.4-4.2-1.3-1.9-3.3-2.2-4-2.2-1.7-.2-3.3 1-4.2 1-1 0-2.3-1-3.8-1-2 0-3.8 1.2-4.8 3-2 3.5-.5 8.7 1.4 11.5 1 1.4 2.1 2.9 3.6 2.9 1.5-.1 2-.9 3.8-.9 1.8 0 2.3.9 3.8.9 1.5 0 2.5-1.4 3.5-2.8 1.1-1.6 1.5-3.2 1.5-3.3-.1-.1-3.1-1.2-3.1-4.9zM15.2 1.8c.8-1 1.3-2.3 1.2-3.7-1.2.1-2.6.8-3.4 1.8-.7.8-1.3 2.1-1.1 3.4 1.3.1 2.5-.6 3.3-1.5z"/></svg>`,
+    linux: `<svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5v2.5c0 1.5-.5 2.5-1.5 3.5S4 15 4 17a5 5 0 0 0 5 5h6a5 5 0 0 0 5-5c0-2-1-3.5-2-4.5s-1.5-2-1.5-3.5V7a5 5 0 0 0-5-5zm-2 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-2 6c-1.5 0-2.5-1-2.5-1s1-.5 2.5-.5 2.5.5 2.5.5-1 1-2.5 1z"/></svg>`
+  };
+
+  let displayModel = deviceData.model;
+  if (!displayModel || displayModel.toLowerCase() === 'desktop') {
+    if (deviceData.os.includes('Windows')) displayModel = t('pcLaptop');
+    else if (deviceData.os.includes('Mac')) displayModel = 'Mac';
+    else displayModel = t('device');
+  }
+
+  let displayOs = deviceData.os;
+  if (displayOs === 'Unknown OS') displayOs = t('unknownOS');
+
+  let displayBrowser = deviceData.browser;
+  if (displayBrowser === 'Browser') displayBrowser = t('browser');
+
+  iconBox.innerHTML = ICONS[deviceData.icon] || ICONS.linux;
+  title.textContent = displayModel;
+  sub.textContent = `${displayOs} • ${displayBrowser}`;
+}
+
 function applyLang(){
   brandSubtitle.textContent=t("subtitle");
   suggestLabel.textContent=t("suggest");
@@ -277,6 +317,7 @@ function applyLang(){
   langButtons.forEach(b=>b.classList.toggle("active",b.dataset.lang===currentLang));
   updateTabs();
   renderMods();
+  renderDeviceInfo(); // Обновляем карточку устройства при смене языка
 }
 
 langButtons.forEach(btn=>btn.addEventListener("click",()=>{ currentLang=btn.dataset.lang; saveLang(currentLang); applyLang(); }));
@@ -314,20 +355,9 @@ async function loadMods(){
 // ── DEVICE DETECTOR ──
 function initDeviceDetector() {
   const toast = document.getElementById('deviceToast');
-  const title = document.getElementById('deviceTitle');
-  const sub = document.getElementById('deviceSub');
-  const iconBox = document.getElementById('deviceIcon');
   const closeBtn = document.getElementById('deviceClose');
 
   closeBtn.addEventListener('click', () => toast.classList.remove('show'));
-
-  const ICONS = {
-    windows: `<svg viewBox="0 0 24 24"><path d="M3 5.5L10.5 4.5V11.5H3V5.5ZM3 12.5H10.5V19.5L3 18.5V12.5ZM11.5 4.3L21 3V11.5H11.5V4.3ZM11.5 12.5H21V21L11.5 19.7V12.5Z"/></svg>`,
-    android: `<svg viewBox="0 0 24 24"><path d="M6 9h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9zm2-3a4 4 0 0 1 8 0v1H8V6zm-3 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm14 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM8 21v1a1 1 0 0 1-2 0v-1H8zm10 0v1a1 1 0 0 1-2 0v-1h2z"/></svg>`,
-    ios: `<svg viewBox="0 0 24 24"><path d="M16 1c-.4 1.3-1.3 2.3-2.5 3-1.2.7-2.5.9-3.5.9-.1-1.3.3-2.7 1.2-3.8C12.1.1 13.4-.2 14.4 0c.3-.1.9-.1 1.6.1zm.5 5.5c-1.4 0-2.6.8-3.3.8-.8 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.3 2.9 2.2 1.2-.1 1.6-.8 3-.8 1.4 0 1.8.8 3 .8 1.2-.1 2-1.1 2.8-2.2.9-1.3 1.3-2.6 1.3-2.7-.1-.1-2.5-1-2.5-3.7 0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.7-3.6-1.7z"/></svg>`,
-    macos: `<svg viewBox="0 0 24 24"><path d="M18.7 10c0-2.8 2.3-4.1 2.4-4.2-1.3-1.9-3.3-2.2-4-2.2-1.7-.2-3.3 1-4.2 1-1 0-2.3-1-3.8-1-2 0-3.8 1.2-4.8 3-2 3.5-.5 8.7 1.4 11.5 1 1.4 2.1 2.9 3.6 2.9 1.5-.1 2-.9 3.8-.9 1.8 0 2.3.9 3.8.9 1.5 0 2.5-1.4 3.5-2.8 1.1-1.6 1.5-3.2 1.5-3.3-.1-.1-3.1-1.2-3.1-4.9zM15.2 1.8c.8-1 1.3-2.3 1.2-3.7-1.2.1-2.6.8-3.4 1.8-.7.8-1.3 2.1-1.1 3.4 1.3.1 2.5-.6 3.3-1.5z"/></svg>`,
-    linux: `<svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5v2.5c0 1.5-.5 2.5-1.5 3.5S4 15 4 17a5 5 0 0 0 5 5h6a5 5 0 0 0 5-5c0-2-1-3.5-2-4.5s-1.5-2-1.5-3.5V7a5 5 0 0 0-5-5zm-2 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm4 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-2 6c-1.5 0-2.5-1-2.5-1s1-.5 2.5-.5 2.5.5 2.5.5-1 1-2.5 1z"/></svg>`
-  };
 
   function getOSInfo(platform, ua) {
     const p = (platform || '').toLowerCase();
@@ -350,7 +380,6 @@ function initDeviceDetector() {
         const info = getOSInfo(h.platform, navigator.userAgent);
         
         let versionStr = '';
-        // Для Windows версию не показываем, только название
         if (info.name !== 'Windows' && h.platformVersion) {
           versionStr = ' ' + h.platformVersion.split('.')[0];
         }
@@ -380,13 +409,16 @@ function initDeviceDetector() {
       else if (ua.includes('Safari/') && !ua.includes('Chrome')) browserName = 'Safari';
     }
 
-    if (!deviceModel || deviceModel.toLowerCase() === 'desktop') {
-      deviceModel = osName.includes('Windows') ? 'ПК / Ноутбук' : osName.includes('Mac') ? 'Mac' : 'Пристрій';
-    }
-
-    iconBox.innerHTML = ICONS[osIcon] || ICONS.linux;
-    title.textContent = deviceModel;
-    sub.textContent = `${osName} • ${browserName}`;
+    // Сохраняем в глобальную переменную
+    deviceData = {
+      model: deviceModel,
+      os: osName,
+      icon: osIcon,
+      browser: browserName
+    };
+    
+    // Отрисовываем с учетом текущего языка
+    renderDeviceInfo();
   }
   
   detect();
