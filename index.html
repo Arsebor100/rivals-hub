@@ -59,6 +59,11 @@ button,select{font:inherit}
 .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
 
+/* Стили для приватки */
+.private-badge{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:.72rem;font-weight:700;margin-bottom:10px;margin-right:8px;}
+.private-badge.free{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3);}
+.private-badge.paid{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3);}
+
 .codes-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .code-pill{display:inline-flex;align-items:center;padding:8px 14px;border-radius:10px;background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.22);font-size:.82rem;color:#fde68a;cursor:pointer;user-select:none;transition:all .15s ease}
 .code-pill:hover{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.4)}
@@ -157,9 +162,9 @@ button,select{font:inherit}
 
 <script>
 const translations = {
-  uk: { subtitle:"Каталог і статус проєктів",status:"Статус",all:"Усі",works:"Працює",broken:"Не працює",deleted:"Видалений",checked:"Перевірено",pros:"Плюси",cons:"Мінуси",codes:"Коди",empty:"Нічого не знайдено",emptyHint:"Спробуй інший статус.",suggest:"Запропонувати мод / доповнення",loading:"Завантаження…",copied:"Скопійовано!",tapForSound:"торкнись для звуку 🔊", pcLaptop:"ПК / Ноутбук", device:"Пристрій", unknownOS:"Невідома ОС", browser:"Браузер" },
-  ru: { subtitle:"Каталог и статус проектов",status:"Статус",all:"Все",works:"Работает",broken:"Не работает",deleted:"Удалён",checked:"Проверено",pros:"Плюсы",cons:"Минусы",codes:"Коды",empty:"Ничего не найдено",emptyHint:"Попробуй другой статус.",suggest:"Предложить мод / дополнение",loading:"Загрузка…",copied:"Скопировано!",tapForSound:"коснись для звука 🔊", pcLaptop:"ПК / Ноутбук", device:"Устройство", unknownOS:"Неизвестная ОС", browser:"Браузер" },
-  en: { subtitle:"Catalog & status tracker",status:"Status",all:"All",works:"Works",broken:"Broken",deleted:"Deleted",checked:"Checked",pros:"Pros",cons:"Cons",codes:"Codes",empty:"No entries found",emptyHint:"Try another status.",suggest:"Suggest a mod / addition",loading:"Loading…",copied:"Copied!",tapForSound:"tap for sound 🔊", pcLaptop:"PC / Laptop", device:"Device", unknownOS:"Unknown OS", browser:"Browser" }
+  uk: { subtitle:"Каталог і статус проєктів",status:"Статус",all:"Усі",works:"Працює",broken:"Не працює",deleted:"Видалений",checked:"Перевірено",pros:"Плюси",cons:"Мінуси",codes:"Коди",empty:"Нічого не знайдено",emptyHint:"Спробуй інший статус.",suggest:"Запропонувати мод / доповнення",loading:"Завантаження…",copied:"Скопійовано!",tapForSound:"торкнись для звуку 🔊", pcLaptop:"ПК / Ноутбук", device:"Пристрій", unknownOS:"Невідома ОС", browser:"Браузер", privFree:"Безкоштовна приватка", privPaid:"Платна приватка" },
+  ru: { subtitle:"Каталог и статус проектов",status:"Статус",all:"Все",works:"Работает",broken:"Не работает",deleted:"Удалён",checked:"Проверено",pros:"Плюсы",cons:"Минусы",codes:"Коды",empty:"Ничего не найдено",emptyHint:"Попробуй другой статус.",suggest:"Предложить мод / дополнение",loading:"Загрузка…",copied:"Скопировано!",tapForSound:"коснись для звука 🔊", pcLaptop:"ПК / Ноутбук", device:"Устройство", unknownOS:"Неизвестная ОС", browser:"Браузер", privFree:"Бесплатная приватка", privPaid:"Платная приватка" },
+  en: { subtitle:"Catalog & status tracker",status:"Status",all:"All",works:"Works",broken:"Broken",deleted:"Deleted",checked:"Checked",pros:"Pros",cons:"Cons",codes:"Codes",empty:"No entries found",emptyHint:"Try another status.",suggest:"Suggest a mod / addition",loading:"Loading…",copied:"Copied!",tapForSound:"tap for sound 🔊", pcLaptop:"PC / Laptop", device:"Device", unknownOS:"Unknown OS", browser:"Browser", privFree:"Free private server", privPaid:"Paid private server" }
 };
 
 const LANG_KEY="rivalsHubLang", LOADER_KEY="rivalsHubLoaded";
@@ -250,7 +255,16 @@ function renderMods(){
       }
     }
 
-    // Заглушки для картинок и иконок
+    // Бейдж приватки
+    let privateHtml = '';
+    if (!isHiddenInfo && m.private && m.private !== "none") {
+      if (m.private === "free") {
+        privateHtml = '<span class="private-badge free">🔓 '+esc(t("privFree"))+'</span>';
+      } else if (m.private === "paid") {
+        privateHtml = '<span class="private-badge paid">🔒 '+esc(t("privPaid"))+'</span>';
+      }
+    }
+
     const thumbHtml = m.image 
       ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' 
       : '<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--soft);opacity:.5;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4m-2-2v4m8-2h.01M18 10h.01"/></svg></div>';
@@ -267,7 +281,6 @@ function renderMods(){
         + esc(m.group)+'</a>'
       : '';
       
-    // Встроенная иконка Discord (вместо m.discordIcon)
     const discordHtml = m.discordUrl 
       ? '<a class="discord-link" href="'+esc(m.discordUrl)+'" target="_blank" rel="noopener noreferrer" title="Discord"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037 13.722 13.722 0 00-.605 1.242 18.27 18.27 0 00-5.487 0 13.722 13.722 0 00-.605-1.242.074.074 0 00-.079-.037A19.79 19.79 0 003.683 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>'
       : '';
@@ -281,7 +294,7 @@ function renderMods(){
       +'<div class="head-body">'
       +'<div class="title-row"><h3 class="card-title"><a href="'+esc(m.placeUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.title)+'</a></h3><span class="badge badge-'+esc(m.status)+'">'+esc(t(m.status))+'</span></div>'
       +'<div class="card-meta">'+avatarHtml+'<a class="creator" href="'+esc(m.creatorUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(m.creator)+'</a>'+groupHtml+'<span class="dot">•</span><span>'+esc(t("checked"))+': '+esc(m.checked)+'</span>'+(discordHtml?'<span class="dot">•</span>'+discordHtml:'')+'</div>'
-      +tagsHtml
+      +'<div style="display:flex;flex-wrap:wrap;align-items:center;">'+privateHtml+tagsHtml+'</div>'
       +'</div></div>'
       +codesHtml
       +listsHtml
