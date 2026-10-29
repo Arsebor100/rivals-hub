@@ -99,7 +99,11 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
           </select>
         </label>
       </div>
-      <label><span>Посилання на гру *</span><input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." /></label>
+      <label>
+        <span>Посилання на гру *</span>
+        <input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." />
+        <div style="font-size:0.65rem;color:var(--soft);margin-top:4px;opacity:0.7;">Можна вставити повне посилання Roblox, воно автоматично скоротиться до rblx.games</div>
+      </label>
       <label><span>Логотип гри (URL, необов'язково)</span><input id="fImage" placeholder="https://tr.rbxcdn.com/... або залиш пустим" /></label>
       <label><span>Дата перевірки (ДД.ММ.РРРР)</span>
         <div style="display:flex;gap:8px"><input id="fChecked" placeholder="25.10.2026 22:00 (ua)" style="flex:1" /><button class="btn btn-ghost" id="todayBtn" type="button">Сьогодні</button></div>
@@ -121,7 +125,6 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
 
       <div class="section-title">Discord (необов'язково)</div>
       <label><span>Посилання на Discord</span><input id="fDiscordUrl" placeholder="https://discord.gg/..." /></label>
-      <label><span>Іконка Discord (URL)</span><input id="fDiscordIcon" placeholder="https://... .png" /></label>
 
       <div class="section-title">Теги</div>
       <label><span>Через кому</span><input id="fTags" placeholder="modded shop, private, old" /></label>
@@ -274,11 +277,9 @@ function renderList(){
       +   '<div class="info"><div class="name">'+m.title+'</div><div class="meta">'+m.id+' · <span class="badge badge-'+m.status+'">'+statusLabel(m.status)+'</span></div></div>'
       + '</div>'
       + '<div class="row-actions">'
-      // Кнопки перемещения
       +   '<button class="btn btn-order" data-action="move-up" data-index="'+i+'" '+(isFirst?'disabled':'')+' title="Вверх">⬆️</button>'
       +   '<button class="btn btn-order" data-action="move-down" data-index="'+i+'" '+(isLast?'disabled':'')+' title="Вниз">⬇️</button>'
       +   '<span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>'
-      // Статусы и редактирование
       +   mkBtn("works") + mkBtn("broken") + mkBtn("deleted")
       +   '<span style="flex:1"></span>'
       +   '<button class="btn btn-ghost" data-action="edit" data-id="'+m.id+'">✏️ Редагувати</button>'
@@ -302,7 +303,6 @@ function fillForm(m){
   $("fGroupUrl").value = m.groupUrl || "";
   $("fGroupAvatar").value = m.groupAvatar || "";
   $("fDiscordUrl").value = m.discordUrl || "";
-  $("fDiscordIcon").value = m.discordIcon || "";
   $("fTags").value = Array.isArray(m.tags) ? m.tags.join(", ") : "";
   $("fCodesUk").value = (m.codes && m.codes.uk) || "";
   $("fCodesRu").value = (m.codes && m.codes.ru) || "";
@@ -373,8 +373,6 @@ function readForm(){
   const discordUrl = $("fDiscordUrl").value.trim();
   if (discordUrl) {
     obj.discordUrl = discordUrl;
-    const discordIcon = $("fDiscordIcon").value.trim();
-    if (discordIcon) obj.discordIcon = discordIcon;
   }
 
   obj.checked = $("fChecked").value.trim() || todayUA();
@@ -454,18 +452,13 @@ async function deleteMod(id){
   }
 }
 
-// ── НОВАЯ ФУНКЦИЯ ДЛЯ СМЕНЫ ПОРЯДКА ──
 async function moveMod(index, direction) {
   const newIndex = direction === 'up' ? index - 1 : index + 1;
   if (newIndex < 0 || newIndex >= mods.length) return;
 
-  // Меняем местами в массиве
   [mods[index], mods[newIndex]] = [mods[newIndex], mods[index]];
-
-  // Визуально обновляем сразу, чтобы было плавно
   renderList();
   
-  // Блокируем кнопки на время сохранения (визуально через прозрачность)
   const allBtns = document.querySelectorAll('.btn-order');
   allBtns.forEach(b => b.disabled = true);
 
@@ -474,7 +467,6 @@ async function moveMod(index, direction) {
     toast("Порядок збережено");
   } catch(e) {
     toast("Помилка збереження: " + e.message, true);
-    // Откат в случае ошибки
     [mods[newIndex], mods[index]] = [mods[index], mods[newIndex]];
     renderList();
   }
@@ -515,6 +507,15 @@ $("cancelBtn").addEventListener("click", () => {
 
 $("saveBtn").addEventListener("click", saveForm);
 $("todayBtn").addEventListener("click", () => { $("fChecked").value = todayUA(); });
+
+// МАГИЧЕСКИЙ КОНВЕРТЕР ССЫЛОК
+$("fPlaceUrl").addEventListener("blur", (e) => {
+  const val = e.target.value.trim();
+  const match = val.match(/(?:roblox\.com\/games\/|rblx\.games\/)(\d+)/);
+  if (match && match[1]) {
+    e.target.value = "https://rblx.games/" + match[1];
+  }
+});
 
 $("modsList").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-action]");
