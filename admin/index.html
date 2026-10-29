@@ -99,11 +99,23 @@ textarea{resize:vertical;min-height:70px;font-family:'Rubik',sans-serif}
           </select>
         </label>
       </div>
-      <label>
-        <span>Посилання на гру *</span>
-        <input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." />
-        <div style="font-size:0.65rem;color:var(--soft);margin-top:4px;opacity:0.7;">Можна вставити повне посилання Roblox, воно автоматично скоротиться до rblx.games</div>
-      </label>
+      
+      <div class="row-2">
+        <label>
+          <span>Посилання на гру *</span>
+          <input id="fPlaceUrl" placeholder="https://www.roblox.com/games/..." />
+          <div style="font-size:0.65rem;color:var(--soft);margin-top:4px;opacity:0.7;">Можна вставити повне посилання Roblox, воно скоротиться до rblx.games</div>
+        </label>
+        <label>
+          <span>Приватний сервер</span>
+          <select id="fPrivate">
+            <option value="none">Немає</option>
+            <option value="free">Безкоштовна</option>
+            <option value="paid">Платна</option>
+          </select>
+        </label>
+      </div>
+
       <label><span>Логотип гри (URL, необов'язково)</span><input id="fImage" placeholder="https://tr.rbxcdn.com/... або залиш пустим" /></label>
       <label><span>Дата перевірки (ДД.ММ.РРРР)</span>
         <div style="display:flex;gap:8px"><input id="fChecked" placeholder="25.10.2026 22:00 (ua)" style="flex:1" /><button class="btn btn-ghost" id="todayBtn" type="button">Сьогодні</button></div>
@@ -293,6 +305,7 @@ function fillForm(m){
   $("fTitle").value = m.title || "";
   $("fId").value = m.id || "";
   $("fStatus").value = m.status || "works";
+  $("fPrivate").value = m.private || "none";
   $("fPlaceUrl").value = m.placeUrl || "";
   $("fImage").value = m.image || "";
   $("fChecked").value = m.checked || todayUA();
@@ -355,9 +368,13 @@ function readForm(){
   const obj = {
     id, title,
     status: $("fStatus").value,
+    private: $("fPrivate").value,
     placeUrl,
     creator, creatorUrl
   };
+  
+  if (obj.private === "none") delete obj.private;
+
   const creatorAvatar = $("fCreatorAvatar").value.trim();
   if (creatorAvatar) obj.creatorAvatar = creatorAvatar;
 
@@ -508,7 +525,6 @@ $("cancelBtn").addEventListener("click", () => {
 $("saveBtn").addEventListener("click", saveForm);
 $("todayBtn").addEventListener("click", () => { $("fChecked").value = todayUA(); });
 
-// МАГИЧЕСКИЙ КОНВЕРТЕР ССЫЛОК
 $("fPlaceUrl").addEventListener("blur", (e) => {
   const val = e.target.value.trim();
   const match = val.match(/(?:roblox\.com\/games\/|rblx\.games\/)(\d+)/);
