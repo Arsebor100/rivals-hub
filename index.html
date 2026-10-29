@@ -55,7 +55,6 @@ button,select{font:inherit}
 .creator:hover,.group:hover{text-decoration:underline}
 .discord-link{display:inline-flex;align-items:center;justify-content:center;color:#d8b4fe;transition:transform .12s ease}
 .discord-link:hover{transform:scale(1.1)}
-.discord-icon{width:20px;height:20px;object-fit:contain;border-radius:6px}
 .dot{color:var(--soft);opacity:.6}
 .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .tag{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:.72rem}
@@ -198,7 +197,6 @@ let currentLang=loadSavedLang();
 let mods=[];
 let currentFilter="works";
 
-// Данные устройства (сохраняются тут, чтобы переводить при смене языка)
 let deviceData = {
   model: '',
   os: '',
@@ -252,11 +250,28 @@ function renderMods(){
       }
     }
 
-    const thumbHtml=m.image?'<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />':'';
-    const avatarHtml=m.creatorAvatar?'<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />':'';
-    const groupHtml=(m.group&&m.groupUrl)?'<span class="dot">•</span><a class="group" href="'+esc(m.groupUrl)+'" target="_blank" rel="noopener noreferrer">'+(m.groupAvatar?'<img class="avatar group" src="'+esc(m.groupAvatar)+'" alt="" loading="lazy" />':'')+esc(m.group)+'</a>':'';
-    const discordHtml=m.discordUrl?'<a class="discord-link" href="'+esc(m.discordUrl)+'" target="_blank" rel="noopener noreferrer" title="Discord">'+(m.discordIcon?'<img class="discord-icon" src="'+esc(m.discordIcon)+'" alt="Discord" loading="lazy" />':'Discord')+'</a>':'';
+    // Заглушки для картинок и иконок
+    const thumbHtml = m.image 
+      ? '<img class="thumb" src="'+esc(m.image)+'" alt="'+esc(m.title)+'" loading="lazy" />' 
+      : '<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--soft);opacity:.5;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4m-2-2v4m8-2h.01M18 10h.01"/></svg></div>';
     
+    const avatarHtml = m.creatorAvatar 
+      ? '<img class="avatar" src="'+esc(m.creatorAvatar)+'" alt="" loading="lazy" />' 
+      : '<div class="avatar" style="display:flex;align-items:center;justify-content:center;color:var(--soft);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
+    
+    const groupHtml = (m.group && m.groupUrl)
+      ? '<span class="dot">•</span><a class="group" href="'+esc(m.groupUrl)+'" target="_blank" rel="noopener noreferrer">'
+        + (m.groupAvatar 
+            ? '<img class="avatar group" src="'+esc(m.groupAvatar)+'" alt="" loading="lazy" />' 
+            : '<div class="avatar group" style="display:flex;align-items:center;justify-content:center;color:var(--soft);"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>')
+        + esc(m.group)+'</a>'
+      : '';
+      
+    // Встроенная иконка Discord (вместо m.discordIcon)
+    const discordHtml = m.discordUrl 
+      ? '<a class="discord-link" href="'+esc(m.discordUrl)+'" target="_blank" rel="noopener noreferrer" title="Discord"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037 13.722 13.722 0 00-.605 1.242 18.27 18.27 0 00-5.487 0 13.722 13.722 0 00-.605-1.242.074.074 0 00-.079-.037A19.79 19.79 0 003.683 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>'
+      : '';
+
     const prosBox=prosArr.length?'<div class="list-box"><h4>'+esc(t("pros"))+'</h4><ul>'+pros+'</ul></div>':'';
     const consBox=consArr.length?'<div class="list-box"><h4>'+esc(t("cons"))+'</h4><ul>'+cons+'</ul></div>':'';
     const listsHtml=(prosArr.length||consArr.length)?'<div class="'+((prosArr.length&&consArr.length)?'lists':'lists single')+'">'+prosBox+consBox+'</div>':'';
@@ -317,7 +332,7 @@ function applyLang(){
   langButtons.forEach(b=>b.classList.toggle("active",b.dataset.lang===currentLang));
   updateTabs();
   renderMods();
-  renderDeviceInfo(); // Обновляем карточку устройства при смене языка
+  renderDeviceInfo(); 
 }
 
 langButtons.forEach(btn=>btn.addEventListener("click",()=>{ currentLang=btn.dataset.lang; saveLang(currentLang); applyLang(); }));
@@ -352,7 +367,6 @@ async function loadMods(){
   mods=[]; 
 }
 
-// ── DEVICE DETECTOR ──
 function initDeviceDetector() {
   const toast = document.getElementById('deviceToast');
   const closeBtn = document.getElementById('deviceClose');
@@ -409,7 +423,6 @@ function initDeviceDetector() {
       else if (ua.includes('Safari/') && !ua.includes('Chrome')) browserName = 'Safari';
     }
 
-    // Сохраняем в глобальную переменную
     deviceData = {
       model: deviceModel,
       os: osName,
@@ -417,7 +430,6 @@ function initDeviceDetector() {
       browser: browserName
     };
     
-    // Отрисовываем с учетом текущего языка
     renderDeviceInfo();
   }
   
@@ -430,7 +442,6 @@ function initDeviceDetector() {
 
 let showDeviceToast = null;
 
-// ── LOADER ──
 (function runLoader(){
   const loader=document.getElementById("loader"); 
   if(!loader)return;
