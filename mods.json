@@ -103,5 +103,24 @@
         "Paid private server"
       ]
     }
+  },
+  {
+    "id": "123",
+    "title": "123",
+    "status": "broken",
+    "placeUrl": "123",
+    "creator": "123",
+    "creatorUrl": "123",
+    "checked": "123",
+    "pros": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    },
+    "cons": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    }
   }
 ]
