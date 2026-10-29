@@ -63,6 +63,34 @@
     }
   },
   {
+    "id": "all-ages-rivals-modded-admin-panelz",
+    "title": "[ALL AGES] Rivals Modded Admin Panelz",
+    "status": "works",
+    "placeUrl": "https://rblx.games/127026763819852",
+    "creator": "eOEQuZbyEu",
+    "creatorUrl": "https://www.roblox.com/users/9965659055/profile",
+    "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-B78113BCFD71885FFA1BC802F2D438AB-Png/150/150/AvatarHeadshot/Webp/noFilter",
+    "group": "jhgfkkjh",
+    "groupUrl": "https://www.roblox.com/communities/356240120/jhgfkkjh#!",
+    "groupAvatar": "https://tr.rbxcdn.com/180DAY-9f4a81baa582cc94ee5de62fe51e61c6/150/150/Image/Webp/noFilter",
+    "discordUrl": "https://discord.gg/rivalsmodded",
+    "checked": "29.10.2026 09:10 (ua)",
+    "tags": [
+      "new modded shop"
+    ],
+    "image": "https://tr.rbxcdn.com/180DAY-5f06a42808ffb9807abb46b8f9cfb0de/150/150/Image/Png/noFilter",
+    "pros": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    },
+    "cons": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    }
+  },
+  {
     "id": "josh-rivals-modded",
     "title": "Josh's RIVALS MODDED",
     "status": "works",
@@ -102,34 +130,6 @@
         "Lots of content locked: ranked shop skins, key skins (except those available in the shop), arch skins, crystal skins, secret items, and more",
         "Paid private server"
       ]
-    }
-  },
-  {
-    "id": "all-ages-rivals-modded-admin-panelz",
-    "title": "[ALL AGES] Rivals Modded Admin Panelz",
-    "status": "works",
-    "placeUrl": "https://rblx.games/127026763819852",
-    "creator": "eOEQuZbyEu",
-    "creatorUrl": "https://www.roblox.com/users/9965659055/profile",
-    "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-B78113BCFD71885FFA1BC802F2D438AB-Png/150/150/AvatarHeadshot/Webp/noFilter",
-    "group": "jhgfkkjh",
-    "groupUrl": "https://www.roblox.com/communities/356240120/jhgfkkjh#!",
-    "groupAvatar": "https://tr.rbxcdn.com/180DAY-9f4a81baa582cc94ee5de62fe51e61c6/150/150/Image/Webp/noFilter",
-    "discordUrl": "https://discord.gg/rivalsmodded",
-    "checked": "29.10.2026 09:10 (ua)",
-    "tags": [
-      "new modded shop"
-    ],
-    "image": "https://tr.rbxcdn.com/180DAY-5f06a42808ffb9807abb46b8f9cfb0de/150/150/Image/Png/noFilter",
-    "pros": {
-      "uk": [],
-      "ru": [],
-      "en": []
-    },
-    "cons": {
-      "uk": [],
-      "ru": [],
-      "en": []
     }
   }
 ]
