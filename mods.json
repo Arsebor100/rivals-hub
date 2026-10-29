@@ -112,6 +112,11 @@
     "creator": "123",
     "creatorUrl": "123",
     "checked": "123",
+    "codes": {
+      "uk": "FREEBUX, 2к",
+      "ru": "FREEBUX, 2к",
+      "en": "FREEBUX, 2к"
+    },
     "pros": {
       "uk": [],
       "ru": [],
