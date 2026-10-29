@@ -35,34 +35,6 @@
     }
   },
   {
-    "id": "a",
-    "title": "a",
-    "status": "works",
-    "placeUrl": "https://www.roblox.com/games/78726892282854/a",
-    "creator": "yacine (@y1cne)",
-    "creatorUrl": "https://www.roblox.com/users/1371940786/profile",
-    "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-AD3D293E492DFFEA3AA6F22C74464568-Png-Background/150/150/AvatarHeadshot/Webp/noFilter",
-    "group": "The Rest Is Football.",
-    "groupUrl": "https://www.roblox.com/communities/655099058/The-Rest-Is-Football#!",
-    "groupAvatar": "https://tr.rbxcdn.com/180DAY-4945bec3f93f6210e89ac651396c87a8/150/150/Image/Webp/noFilter",
-    "checked": "26.10.2026 19:15 (ua)",
-    "tags": [
-      "rauls",
-      "banana"
-    ],
-    "image": "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
-    "pros": {
-      "uk": [],
-      "ru": [],
-      "en": []
-    },
-    "cons": {
-      "uk": [],
-      "ru": [],
-      "en": []
-    }
-  },
-  {
     "id": "all-ages-rivals-modded-admin-panelz",
     "title": "[ALL AGES] Rivals Modded Admin Panelz",
     "status": "works",
@@ -79,6 +51,34 @@
       "new modded shop"
     ],
     "image": "https://tr.rbxcdn.com/180DAY-5f06a42808ffb9807abb46b8f9cfb0de/150/150/Image/Png/noFilter",
+    "pros": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    },
+    "cons": {
+      "uk": [],
+      "ru": [],
+      "en": []
+    }
+  },
+  {
+    "id": "a",
+    "title": "a",
+    "status": "works",
+    "placeUrl": "https://www.roblox.com/games/78726892282854/a",
+    "creator": "yacine (@y1cne)",
+    "creatorUrl": "https://www.roblox.com/users/1371940786/profile",
+    "creatorAvatar": "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-AD3D293E492DFFEA3AA6F22C74464568-Png-Background/150/150/AvatarHeadshot/Webp/noFilter",
+    "group": "The Rest Is Football.",
+    "groupUrl": "https://www.roblox.com/communities/655099058/The-Rest-Is-Football#!",
+    "groupAvatar": "https://tr.rbxcdn.com/180DAY-4945bec3f93f6210e89ac651396c87a8/150/150/Image/Webp/noFilter",
+    "checked": "26.10.2026 19:15 (ua)",
+    "tags": [
+      "rauls",
+      "banana"
+    ],
+    "image": "https://tr.rbxcdn.com/180DAY-b224f9ad0b8cba80f07b07fcf7afdfcd/150/150/Image/Webp/noFilter",
     "pros": {
       "uk": [],
       "ru": [],
