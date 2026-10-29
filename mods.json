@@ -107,10 +107,12 @@
   {
     "id": "123",
     "title": "123",
-    "status": "broken",
+    "status": "works",
     "placeUrl": "123",
     "creator": "123",
     "creatorUrl": "123",
+    "group": "123",
+    "groupUrl": "123",
     "checked": "123",
     "codes": {
       "uk": "FREEBUX, 2к",
